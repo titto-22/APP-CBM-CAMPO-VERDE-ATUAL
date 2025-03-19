@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "newArchEnabled": true,
+    "name": "APP-CBM",
+    "slug": "APP-CBM",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "svg"
+      ]
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/Logo400x400.png",
+        "backgroundColor": "#fff"
+      },
+      "package": "com.devhumberto.APPCBM"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "85a9b27e-8393-4951-8246-b3e192b9fc16"
+      }
+    }
+  }
+}

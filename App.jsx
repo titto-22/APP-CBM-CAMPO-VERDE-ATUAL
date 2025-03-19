@@ -1,0 +1,193 @@
+import * as React from "react";
+import { createContext, useState, useEffect } from "react";
+import * as SecureStore from "expo-secure-store"; //Usa para armazenar informação seguras (login) localmente
+import { StyleSheet, Linking, Alert } from "react-native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+//import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import "react-native-gesture-handler";
+import {	createDrawerNavigator,	DrawerContentScrollView,	DrawerItemList,	DrawerItem,} from "@react-navigation/drawer";
+
+import Login from "./src/pages/Login";
+import HomeEmergencias from "./src/pages/HomeEmergencias";
+import Registrarse from "./src/pages/Registrarse";
+import DadosEmergencia from "./src/pages/DadosEmergencia";
+import Localizacao from "./src/pages/localizacao";
+import {
+	createLoginInSecureStoreTest,
+	getLocalName,
+	getLocalUser,
+	getLocalPassword,
+	getLocalExpirationDate,
+	resetLocalIncident,
+} from "./src/components/function";
+
+//Cria usuário para teste, tem que excluir depois quando for para produção
+createLoginInSecureStoreTest();
+
+////////////////////////////////////////////////////////////
+/////   Validade do login/token armazenado localmente  /////
+////////////////////////////////////////////////////////////
+const validationTokenLogin = 30;
+
+/**
+ * Contexto de autenticação, sempre iniciando em *false*
+ */
+export const AuthContext = createContext({
+	isSignedIn: false,
+	setIsSignedIn: () => {},
+});
+
+export default function App({ navigation }) {
+	///////////////////////////////////////////////////////////
+	/////    Variável que controla se esta logado ou não  /////
+	///////////////////////////////////////////////////////////
+	const [isSignedIn, setIsSignedIn] = useState(false);
+
+	/**
+	 * **Function handleSetIsSignedIn**
+	 *
+	 * Função que atualiza o estado do login para ser usado como contexto nesta e em outras páginas
+	 * @param {boolean} value valor que sera setado para `IsSignedIn`
+	 */
+	const handleSetIsSignedIn = (value) => setIsSignedIn(value);
+
+	/**
+	 * **Function InitialService**
+	 *
+	 * Função que faz validação de usuário. Esta função recupera a data de armazenamento
+	 * do login/token com a função `getLocalExpirationDate()` e verifica se a diferença
+	 * entre a data recuperada e data atual `differenceInDay` é maior que `validationToken`.
+	 *
+	 * Caso `differenceInDay` menor que `validationToken` faz login automaticamente.
+	 *
+	 * Caso não, será necessário fazer login.
+	 * @async `function`
+	 * @param {number} validationToken *Type: number* - Este valor será usado como prazo do login/token
+	 * @returns void
+	 */
+	async function InitialService(validationToken) {
+		resetLocalIncident()
+		const getValidation = await getLocalExpirationDate(); //recupera a data de expiração do login/token
+		const validation = new Date(getValidation); //formata como data
+		const dateNow = new Date(); //cria variável da data atual
+		const differenceMilliseconds = dateNow - validation; //Verifica a diferença em milissegundos
+		const differenceInDay = Math.floor(
+			differenceMilliseconds / (1000 * 60 * 60 * 24),
+		); //Converte em dias
+		//Caso  não tenha expirado o token
+		// Validade de 30 dias
+		if (differenceInDay < validationToken) {
+			setIsSignedIn(true);
+		}
+	}
+
+	//////////////////////////////////////////////////
+	/////    Inicia Biblioteca de Navegação      /////
+	//////////////////////////////////////////////////
+	const Drawer = createDrawerNavigator();
+
+	////////////////////////////////////////////
+	/////    Inicia o serviço de validação  /////
+	////////////////////////////////////////////
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+				useEffect(() => {
+		InitialService(validationTokenLogin);
+	}, []);
+
+	/**
+	 * **Function Logout**
+	 *
+	 *  Função de logout, seta o `isSignedIn` para *false*
+	 */
+	function Logout(navigation) {
+		setIsSignedIn(false);
+		navigation.closeDrawer();
+	}
+
+	return (
+		<AuthContext.Provider
+			value={{ isSignedIn, setIsSignedIn: handleSetIsSignedIn }}
+		>
+			<NavigationContainer>
+				<Drawer.Navigator
+					//initialRouteName='Login'
+					screenOptions={styles.styleTitlePagesColorRedBgWhite}
+					drawerContent={(props) => (
+						<DrawerContentScrollView {...props}>
+							<DrawerItemList {...props} />
+							<DrawerItem
+								label="Ajuda"
+								onPress={() => Linking.openURL("https://www.youtube.com/watch?v=gtKdj9U9oqA")}
+								activeTintColor="#fff"
+								inactiveTintColor="#e7e7e7"
+							/>
+							{isSignedIn && (
+								<DrawerItem
+									label="Sair"
+									onPress={() => Logout(props.navigation)}
+									activeTintColor="#fff"
+									inactiveTintColor="#e7e7e7"
+								/>
+							)}
+						</DrawerContentScrollView>
+					)}
+				>
+					{isSignedIn ? (
+						<>
+							<Drawer.Screen
+								name="Emergências"
+								component={HomeEmergencias}
+								options={{ headerBackVisible: false }}
+							/>
+							<Drawer.Screen
+								name="Localização"
+								component={Localizacao}
+								options={{
+									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+									headerShown: false, // Oculta o título no cabeçalho
+								}}
+							/>
+							<Drawer.Screen
+								name="Dados da Emergência"
+								component={DadosEmergencia}
+								options={{
+									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+									//headerShown: false, // Oculta o título no cabeçalho
+								}}
+							/>
+						</>
+					) : (
+						<>
+							<Drawer.Screen
+								name="Login"
+								component={Login}
+								//options={{ gestureEnabled: false }}
+							/>
+							<Drawer.Screen name="Registrar-se" component={Registrarse} />
+						</>
+					)}
+				</Drawer.Navigator>
+			</NavigationContainer>
+		</AuthContext.Provider>
+	);
+}
+
+export const styles = StyleSheet.create({
+	styleTitlePagesColorRedBgWhite: {
+		headerStyle: {
+			backgroundColor: "#ff0000",
+		},
+		headerTintColor: "#fff",
+		headerTitleStyle: {
+			fontWeight: "bold",
+			textAlign: "center",
+		},
+		gestureEnabled: false,
+		drawerStyle: {
+			backgroundColor: "#ff0000",
+			width: 240,
+		},
+		drawerActiveTintColor: "#ffffff",
+		drawerInactiveTintColor: "#e7e7e7",
+	},
+});
