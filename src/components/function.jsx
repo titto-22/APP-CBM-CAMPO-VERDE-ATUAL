@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store'; //Usa para armazenar informaç
 
 import { Linking, Dimensions } from 'react-native'; //Usado para criar função rem e link
 
+//Teste
 
 /*  ------------------------ // Solução para usar rem \\ ------------------------  */
 export const rem=(value)=>{
