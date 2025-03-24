@@ -12,3 +12,57 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  ADM
+  USR
+  SUPPORT
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  userName       String
+  cpf            String       @unique
+  address        String
+  telephone      String
+  email          String       @unique
+  password       String
+  type           Role         @default(USR)
+  createdAt      DateTime     @default(now())
+  MastersCreated Master[]     @relation("MasterCreator")
+  MasterUser     Master[]     @relation("MasterUser")
+  Viaturas       Viaturas[]
+  Ocorrencia     Ocorrencia[]
+}
+
+model Master {
+  id              Int      @id @default(autoincrement())
+  user            User     @relation("MasterUser", fields: [userId], references: [id])
+  userId          Int      @unique // Garante relacionamento 1-para-1 com User
+  matricula       String   @unique
+  cargo           String
+  createdNewUser  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  createdBy       User?    @relation("MasterCreator", fields: [createdByUserId], references: [id])
+  createdByUserId Int?
+}
+
+model Viaturas {
+  id          Int      @id @default(autoincrement())
+  placa       String   @unique
+  type        String
+  model       String
+  description String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @map("createdBy")
+}
+
+model Ocorrencia {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int @map("createdBy")
+  
+
+}
