@@ -11,9 +11,9 @@ Criando arquitetura do projeto React.Native
 
 ## Bibliotecas
 
-#### Biblioteca de Navegação
+### Biblioteca de Navegação
 
-https://reactnavigation.org/
+[bibioteca de navegação](https://reactnavigation.org/)
 
 `npm install @react-navigation/native`
 
@@ -21,24 +21,23 @@ https://reactnavigation.org/
 
 #### Biblioteca para uso de SVG
 
-https://docs.expo.dev/versions/latest/sdk/svg/
+[Documentação do Expo Go](https://docs.expo.dev/versions/latest/sdk/svg/)
 
 `npx expo install react-native-svg`
 
-`yarn add --dev react-native-svg-transformer -D` 
+`yarn add --dev react-native-svg-transformer -D`
 
 #### Biblioteca para localização
 
 `npm install @react-native-community/geolocation --save`
 
-https://www.youtube.com/watch?v=7DY1tHHudtM
-
+[Video Tutorial](https://www.youtube.com/watch?v=7DY1tHHudtM)
 
 ## Manual de orientações do Projeto
 
 ### Registro e identificação de operações
 
-* Toda operação de **inclusão**  realizada dentro do sistema tem que ter registro da data e usuário que incluíu
+* Toda operação de **inclusão**  realizada dentro do sistema tem que ter registro da data e usuário que incluiu
 * Toda operação de **alteração** deve registrar data e usuário que realizou a alteração.
 
 #### Atenção!!!
@@ -51,7 +50,7 @@ Os dados de alteração serão registrados em campos diferentes
 
 Utilizaremos o banco de dado **postgresql** por ser open source, utilizaremos todo o serviço de banco de dados com o **Docker**, usaremos a imagem `bitnami/postgresql:latest`.
 
-Utilizaremos o **ORM Prisma** para gerenciar nosso banco de dados.
+Utilizaremos o [ORM Prisma](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch) para gerenciar nosso banco de dados.
 
 ### Preparações
 
@@ -60,8 +59,11 @@ Inicialmente é necessário instalar o `docker` e o `prima`.
 ```javascript
 //Instalação do prisma
 npm install @prisma/client
+//Esta instalação é sem typescript
+//Para typescrept -- npm install prisma typescript tsx @types/node --save-dev
 npm install prisma -D
-//Cria a pasta prima no projeto
+npx prisma
+//Cria a pasta prisma no projeto
 npx prisma init
 ```
 
@@ -84,21 +86,13 @@ services:
       - POSTGRES_PASSWORD=Senha
       - POSTGRES_DB=NomeDoBancoDeDados
 ```
-```js
-//Exemplo de um arquivo docker-compose
-version: '3.7'
 
-name: NomeDoDocker
+Além da pasta prisma será criado um arquivo `.env`,  será necessário configurar os dados de conexão nele.
 
-services:
-  pg:
-    container_name: NomeDoDocker
-    image: bitnami/postgresql:latest
-    ports:
-      - '5432:5432'
-    environment:
-      - POSTGRES_USER=NomeDoUsuarioDoBancoDeDados
-      - POSTGRES_PASSWORD=Senha
-      - POSTGRES_DB=NomeDoBancoDeDados
+```env
+DATABASE_URL="postgresql://NomeDoUsuarioDoBancoDeDados:Senha@localhost:5432/NomeDoBancoDeDados?schema=public"
 ```
 
+Inicia o docker e para iniciar o serviço do banco de dados executar `docker compose up -d`.
+
+Após carregar teremos um banco de dados rodando, sendo necessário criar as tabelas.
