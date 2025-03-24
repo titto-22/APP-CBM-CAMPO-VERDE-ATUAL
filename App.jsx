@@ -10,7 +10,7 @@ import {	createDrawerNavigator,	DrawerContentScrollView,	DrawerItemList,	DrawerI
 import Login from "./src/pages/Login";
 import HomeEmergencias from "./src/pages/HomeEmergencias";
 import Registrarse from "./src/pages/Registrarse";
-import DadosEmergencia from "./src/pages/DadosEmergencia";
+import DadosEmergencia from "./src/pages/dadosEmergencia";
 import Localizacao from "./src/pages/localizacao";
 import {
 	createLoginInSecureStoreTest,

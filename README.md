@@ -46,3 +46,60 @@ https://www.youtube.com/watch?v=7DY1tHHudtM
 Os campos de registro de inclusão `date`e `user` **não devem jamais ser alterados**.
 
 Os dados de alteração serão registrados em campos diferentes
+
+## Banco de dados
+
+Utilizaremos o banco de dado **postgresql** por ser open source, utilizaremos todo o serviço de banco de dados com o **Docker**, usaremos a imagem `bitnami/postgresql:latest`.
+
+Utilizaremos o **ORM Prisma** para gerenciar nosso banco de dados.
+
+### Preparações
+
+Inicialmente é necessário instalar o `docker` e o `prima`.
+
+```javascript
+//Instalação do prisma
+npm install @prisma/client
+npm install prisma -D
+//Cria a pasta prima no projeto
+npx prisma init
+```
+
+Depois de instalar o prisma é necessário criar o arquivo `docker-compose.yml` onde será configurado as informações para criar o banco de dados.
+
+```yml
+//Exemplo de um arquivo docker-compose
+version: '3.7'
+
+name: NomeDoDocker
+
+services:
+  pg:
+    container_name: NomeDoDocker
+    image: bitnami/postgresql:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=NomeDoUsuarioDoBancoDeDados
+      - POSTGRES_PASSWORD=Senha
+      - POSTGRES_DB=NomeDoBancoDeDados
+```
+
+```js
+//Exemplo de um arquivo docker-compose
+version: '3.7'
+
+name: NomeDoDocker
+
+services:
+  pg:
+    container_name: NomeDoDocker
+    image: bitnami/postgresql:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=NomeDoUsuarioDoBancoDeDados
+      - POSTGRES_PASSWORD=Senha
+      - POSTGRES_DB=NomeDoBancoDeDados
+```
+

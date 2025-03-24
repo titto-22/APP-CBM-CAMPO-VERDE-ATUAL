@@ -657,10 +657,11 @@ export default function Registrarse({ navigation }) {
 }
 export const stylesRegistrarse = StyleSheet.create({
 	containerMain: {
+		flex:1,
 		alignItems: "center",
 		backgroundColor: "#fff",
 		gap: 14,
-		paddingnTop: 15,
+		paddingTop: 15,
 		paddingEnd: 15,
 		paddingLeft: "5%",
 	},

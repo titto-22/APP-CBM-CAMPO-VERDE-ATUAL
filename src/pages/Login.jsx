@@ -29,7 +29,7 @@ export default function Login({ navigation }) {
     setIsSignedIn(true);
   };
 
-  const emailRef = useRef(null);
+  const emailRef = useRef('');
   const passwordRef = useRef(null);
   const [errorLogin, setErrorLogin] = useState(false);
   const [hiddenPassword, setHiddenPassword] = useState(true);
