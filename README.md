@@ -84,7 +84,6 @@ services:
       - POSTGRES_PASSWORD=Senha
       - POSTGRES_DB=NomeDoBancoDeDados
 ```
-
 ```js
 //Exemplo de um arquivo docker-compose
 version: '3.7'
