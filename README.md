@@ -96,3 +96,9 @@ DATABASE_URL="postgresql://NomeDoUsuarioDoBancoDeDados:Senha@localhost:5432/Nome
 Inicia o docker e para iniciar o serviço do banco de dados executar `docker compose up -d`.
 
 Após carregar teremos um banco de dados rodando, sendo necessário criar as tabelas.
+
+Criar as tabelas na pasta `prisma/esquema.prisma` conforme [documentação.](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-prismaPostgres?utm_source=docs)
+
+```
+npx prisma migrate dev --name init
+```

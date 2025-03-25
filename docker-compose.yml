@@ -1,14 +1,13 @@
-version: '3.7'
-
 name: appcbm
 
+version: '3.7'
 services:
   pg:
     container_name: appcbm
     image: bitnami/postgresql:latest
     ports:
-      - '5432:5432'
+      - '5433:5432'
     environment:
-      - POSTGRES_USER=appcbm
-      - POSTGRES_PASSWORD=96135151Ab
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=appcbm

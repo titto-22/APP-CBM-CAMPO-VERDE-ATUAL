@@ -20,19 +20,20 @@ enum Role {
 }
 
 model User {
-  id             Int          @id @default(autoincrement())
-  userName       String
-  cpf            String       @unique
-  address        String
-  telephone      String
-  email          String       @unique
-  password       String
-  type           Role         @default(USR)
-  createdAt      DateTime     @default(now())
-  MastersCreated Master[]     @relation("MasterCreator")
-  MasterUser     Master[]     @relation("MasterUser")
-  Viaturas       Viaturas[]
-  Ocorrencia     Ocorrencia[]
+  id               Int                @id @default(autoincrement())
+  userName         String
+  cpf              String             @unique
+  address          String
+  telephone        String
+  email            String             @unique
+  password         String
+  type             Role               @default(USR)
+  createdAt        DateTime           @default(now())
+  MastersCreated   Master[]           @relation("MasterCreator")
+  MasterUser       Master[]           @relation("MasterUser")
+  Vehicle          Vehicle[]
+  Occurrence       Occurrence[]
+  IncidentResponse IncidentResponse[]
 }
 
 model Master {
@@ -40,29 +41,81 @@ model Master {
   user            User     @relation("MasterUser", fields: [userId], references: [id])
   userId          Int      @unique // Garante relacionamento 1-para-1 com User
   matricula       String   @unique
-  cargo           String
+  position        String
   createdNewUser  Boolean  @default(false)
   createdAt       DateTime @default(now())
   createdBy       User?    @relation("MasterCreator", fields: [createdByUserId], references: [id])
   createdByUserId Int?
 }
 
-model Viaturas {
-  id          Int      @id @default(autoincrement())
-  placa       String   @unique
-  type        String
-  model       String
-  description String
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int      @map("createdBy")
+model Vehicle {
+  id               Int                @id @default(autoincrement())
+  placa            String             @unique
+  type             String
+  model            String
+  description      String
+  createdAt        DateTime           @default(now())
+  user             User               @relation(fields: [userId], references: [id])
+  userId           Int                @map("createdBy")
+  IncidentResponse IncidentResponse[]
 }
 
-model Ocorrencia {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int @map("createdBy")
-  
+enum statusOccurrence {
+  PENDENTE
+  ATENDENDO
+  FINALIZADO
+}
 
+model Occurrence {
+  id               Int                @id @default(autoincrement())
+  createdAt        DateTime           @default(now())
+  user             User               @relation(fields: [userId], references: [id])
+  userId           Int                @map("Informante")
+  natOco           String
+  geoLat           Int?
+  geoLong          Int?
+  addressLong      String?
+  addressNum       String?
+  addressLog       String?
+  addressBairro    String?
+  addressCity      String?
+  addressState     String?
+  addressCEP       String?
+  addressComp      String?
+  addressDescr     String
+  IncidentResponse IncidentResponse[]
+  statusOccurrence statusOccurrence   @default(PENDENTE)
+}
+
+model IncidentResponse {
+  id                    Int        @id @default(autoincrement())
+  dateInit              DateTime   @default(now())
+  user                  User       @relation(fields: [userId], references: [id])
+  userId                Int        @map("atendente")
+  occurrence            Occurrence @relation(fields: [occurrenceId], references: [id])
+  occurrenceId          Int
+  vehicle               Vehicle?   @relation(fields: [vehicleId], references: [id])
+  vehicleId             Int?
+  dateStartDisplacement DateTime?
+  dateArrivalOccurrence DateTime?
+  arrivalHospital       DateTime?
+  dateReturn            DateTime?
+  Status                Status[]
+}
+
+enum statusIncidentResponse {
+  INICIO
+  COMUNICACAO
+  OBSERVACAO
+  LIGACAO
+  FINALIZACAO
+}
+
+model Status {
+  id                 Int              @id @default(autoincrement())
+  date               DateTime         @default(now())
+  incidenteResponse  IncidentResponse @relation(fields: [incidentResponseId], references: [id])
+  incidentResponseId Int
+  statusIncidentResponse statusIncidentResponse
+  description        String?
 }
