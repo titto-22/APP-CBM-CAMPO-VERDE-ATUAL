@@ -21,7 +21,7 @@ enum Role {
 
 model User {
   id               Int                @id @default(autoincrement())
-  userName         String             
+  userName         String
   cpf              String             @unique @db.VarChar(14)
   addressFull      String?
   addressLog       String?
@@ -60,7 +60,7 @@ model Vehicle {
   placa            String             @unique
   type             String
   model            String
-  description      String
+  description      String?
   createdAt        DateTime           @default(now())
   user             User               @relation(fields: [userId], references: [id])
   userId           Int                @map("createdBy")

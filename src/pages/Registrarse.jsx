@@ -25,6 +25,11 @@ import IconGoogle from "../assets/iconGoogle.svg";
 import EyeOf from "../assets/eye-slash.svg";
 import EyeOn from "../assets/eye.svg";
 
+
+//Banco de dados
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+
 export default function Registrarse({ navigation }) {
 	//Variáveis do nome
 	const [userName, setUserName] = useState("");
