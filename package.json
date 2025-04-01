@@ -9,7 +9,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.1.18",
@@ -33,7 +32,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@biomejs/biome": "1.9.2",
-    "prisma": "^6.5.0",
     "react-native-svg-transformer": "^1.5.0"
   },
   "private": true

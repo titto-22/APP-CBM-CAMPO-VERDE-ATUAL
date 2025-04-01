@@ -104,7 +104,6 @@ export default function Login({ navigation }) {
 
 	return (
 		<View style={stylesMain.containerMain}>
-			<ScrollView style={stylesMain.containerMain}>
 				<View style={[stylesMain.flexRow]}>
 					<CbmLogo width={rem(4)} height={rem(4)} />
 					<Text style={stylesMain.textMain}>Emergências</Text>
@@ -226,7 +225,6 @@ export default function Login({ navigation }) {
 					<IconCall width={rem(2.25)} height={rem(2.25)} />
 					<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
 				</TouchableOpacity>
-			</ScrollView>
 		</View>
 	);
 }
