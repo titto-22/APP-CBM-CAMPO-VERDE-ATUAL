@@ -71,7 +71,7 @@ export default function Login({ navigation }) {
 			password: "123456",
 		};
 
-		const notebookIP = "192.168.0.107"; // Seu IP do notebook
+		const notebookIP = "172.20.10.5"; // Seu IP do notebook
 		const baseURL = `http://${notebookIP}:3333`;
 
 		fetch(`${baseURL}/user`, {
@@ -193,8 +193,8 @@ export default function Login({ navigation }) {
 				</View>
 				<TouchableOpacity
 					onPress={() => {
-						//testeConexaoFrontBack();
-						verificaLogin();
+						testeConexaoFrontBack();
+						//verificaLogin();
 					}}
 					style={[
 						stylesMain.buttonSemiRounded,
