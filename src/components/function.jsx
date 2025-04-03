@@ -1,8 +1,28 @@
 import * as SecureStore from 'expo-secure-store'; //Usa para armazenar informação seguras (login) localmente
 
-import { Linking, Dimensions } from 'react-native'; //Usado para criar função rem e link
+import { Linking, Dimensions, PixelRatio } from 'react-native'; //Usado para criar função rem e link
 
-//Teste
+
+
+/*  ------------------------ // Solução para usar vh \\ ------------------------  */
+/**Função criada para utilizar height view (altura da tela) em porcentagem
+ * @param num - Informar o valor da porcentagem sa tela que deseja
+ * @returns num - Valor que representa a porcentagem da tela solicitada
+ */
+export const vh=(valeu)=>{
+  const {height} = Dimensions.get('window');
+  return  ((height*valeu)/100)
+}
+
+/*  ------------------------ // Solução para usar vw \\ ------------------------  */
+/**Função criada para utilizar width view (largura da tela) em porcentagem
+ * @param num - Informar o valor da porcentagem sa tela que deseja
+ * @returns num - Valor que representa a porcentagem da tela solicitada
+ */
+export const vw=(valeu)=>{
+  const {width} = Dimensions.get('window');
+  return  ((width*valeu)/100)
+}
 
 /*  ------------------------ // Solução para usar rem \\ ------------------------  */
 export const rem=(value)=>{
@@ -12,6 +32,16 @@ export const rem=(value)=>{
     baseFont =14
   }
   return baseFont*value
+}
+
+/*  ------------------------ // Calcula rem em pixel \\ ------------------------  */
+export const NewRem = (valorRem) => {
+  const { width, height } = Dimensions.get('window');
+  const menorDimensao = Math.min(width, height);
+  const proporcao = menorDimensao / 320;
+  const pixelRatio = PixelRatio.get();
+  const valorPixel = valorRem * 16 * proporcao * pixelRatio;
+  return valorPixel;
 }
 
 /*  ------------------------ // Ligação \\ ------------------------  */

@@ -8,7 +8,7 @@ import {
 	Platform,
 	ScrollView,
 } from "react-native";
-import { rem, handleCall } from "../components/function";
+import { rem, handleCall, NewRem } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
 import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
@@ -60,47 +60,7 @@ export default function Login({ navigation }) {
 		}
 	}, []);
 
-	// ---------------------  TESTE CONEXÃO -------------------------------
-
-	function testeConexaoFrontBack() {
-		const userData = {
-			userName: "Teste",
-			cpf: "04404846185",
-			telephone: "06645232",
-			email: "teste@teste.com",
-			password: "123456",
-		};
-
-		const notebookIP = "172.20.10.5"; // Seu IP do notebook
-		const baseURL = `http://${notebookIP}:3333`;
-
-		fetch(`${baseURL}/user`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(userData),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`Erro na requisição: ${response.status}`);
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log("Sucesso:", data);
-				// Faça algo com a resposta do servidor
-			})
-			.catch((error) => {
-				console.error("Erro:", error);
-				// Lide com erros de requisição
-			})
-			.finally(() => {
-				setLoadingTeste(false);
-			});
-	}
-
-	// ---------------------  TESTE CONEXÃO -------------------------------
+	
 
 	return (
 		<View style={stylesMain.containerMain}>
@@ -193,8 +153,7 @@ export default function Login({ navigation }) {
 				</View>
 				<TouchableOpacity
 					onPress={() => {
-						testeConexaoFrontBack();
-						//verificaLogin();
+						verificaLogin();
 					}}
 					style={[
 						stylesMain.buttonSemiRounded,
@@ -298,13 +257,13 @@ export const stylesMain = StyleSheet.create({
 		transform: [{ translateY: 13 }],
 		backgroundColor: "#fff",
 		zIndex: 999,
-		width: rem(5.5),
+		width: NewRem(2.3),
 		alignItems: "left",
 		color: "#94a3b8",
 	},
 	textTopInput: {
 		color: "#64748b",
-		fontSize: rem(0.8),
+		fontSize: NewRem(0.35),
 	},
 	textBold: {
 		fontWeight: "bold",

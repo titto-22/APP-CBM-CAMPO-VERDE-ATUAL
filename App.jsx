@@ -37,6 +37,13 @@ export const AuthContext = createContext({
 	setIsSignedIn: () => {},
 });
 
+/**
+ * Contexto Ip de conexão com o banco de dados
+ */
+export const ipContext=createContext('192.168.0.111')
+
+
+
 export default function App({ navigation }) {
 	///////////////////////////////////////////////////////////
 	/////    Variável que controla se esta logado ou não  /////
@@ -106,8 +113,13 @@ export default function App({ navigation }) {
 
 	return (
 		<AuthContext.Provider
-			value={{ isSignedIn, setIsSignedIn: handleSetIsSignedIn }}
+			value={{ 
+				isSignedIn,
+				setIsSignedIn: handleSetIsSignedIn,
+				ip:React.useContext(ipContext)
+			}}
 		>
+			
 			<NavigationContainer>
 				<Drawer.Navigator
 					//initialRouteName='Login'

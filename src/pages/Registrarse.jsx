@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import {
 	Text,
 	View,
@@ -19,7 +19,11 @@ import {
 	salveLocalCPF,
 	salveLocalAdress,
 	salveLocalName,
+	vh,
+	vw,
+	NewRem,
 } from "../components/function";
+import { AuthContext } from "../../App";
 import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
 import EyeOf from "../assets/eye-slash.svg";
@@ -29,6 +33,9 @@ import EyeOn from "../assets/eye.svg";
 
 
 export default function Registrarse({ navigation }) {
+	//ip de conexão com o banco de dados
+	const { ip } = useContext(AuthContext) 
+
 	//Variáveis do nome
 	const [userName, setUserName] = useState("");
 	const [insightName, setInsightName] = useState(false);
@@ -291,371 +298,417 @@ export default function Registrarse({ navigation }) {
 		return result;
 	}
 
+	// ---------------------  TESTE CONEXÃO -------------------------------
+
+	function testeConexaoFrontBack() {
+		const userData = {
+			userName: "Teste",
+			cpf: "04404846185",
+			telephone: "06645232",
+			email: "teste@teste.com",
+			password: "123456",
+			addressFull: 'rua teste, numeor teste, bairro teste, complemente completamete incompleto, city: starcity, Mato Grande, Minas unicas, brazil com z de zorrrrrro'
+
+		};
+
+		const baseURL = `http://${ip}:3333`;
+
+		fetch(`${baseURL}/user`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(userData),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Erro na requisição: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Sucesso:", data);
+				// Faça algo com a resposta do servidor
+			})
+			.catch((error) => {
+				console.error("Erro:", error);
+				// Lide com erros de requisição
+			})
+			.finally(() => {
+				setLoadingTeste(false);
+			});
+	}
+
+	// ---------------------  TESTE CONEXÃO -------------------------------
+	
+	
 	return (
-		//<KeyboardAvoidingView
-		//behavior={Platform.OS === "ios" ? "padding" : "height"}
-		<ScrollView
-			contentContainerStyle={[
-				stylesRegistrarse.containerMain,
-				{ justifyContent: isFocused ? "flex-start" : "center" }, {marginBottom:isFocused?rem(10):0},
-			]}
-		>
-			<Text style={stylesMain.textBase}>Criar conta</Text>
-			<View style={[stylesMain.with80]}>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>Nome:</Text>
-				</View>
-				<TextInput //Name
-					style={[stylesMain.input, stylesMain.withFull]}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => {
-						setIsFocused(false);
-						if (!nameIsValid(userName)) {
-							setInsightName(true);
-						} else {
-							setInsightName(false);
-							setErrorName(false);
-						}
-					}}
-					returnKeyType="next" //define botão no teclado de próximo
-					ref={firstInputRef} //define a referencia
-					onSubmitEditing={() => {
-						secondInputRef.current.focus(); // Move o foco para o segundo input
-					}}
-					onChangeText={(text) => {
-						setUserName(text);
-					}}
-					value={userName}
-					placeholder="Insira seu Nome Completo"
-					maxLength={45}
-				/>
-				<Text //insight Name
-					style={[
-						{ display: insightName ? "flex" : "none" },
-						{ color: errorName ? "#ff0000" : "#64748b" },
-					]}
-				>
-					Insira o seu nome completo
-				</Text>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>E-mail:</Text>
-				</View>
-				<TextInput // Email
-					style={[stylesMain.input, stylesMain.withFull]}
-					maxLength={45}
-					onFocus={() => {
-						setIsFocused(true);
-						if (userEmail === "") {
-							setErrorEmail(false);
-						}
-					}}
-					onBlur={() => {
-						setIsFocused(false);
-						if (initialValidation) {
-							if (!insightEmail) {
-								setErrorEmail(false);
+			<View style={{height:vh(100), width:vw(100)}}>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={[
+					stylesRegistrarse.containerMain,
+				]}
+			>
+				<Text style={stylesRegistrarse.title}>Criar conta</Text>
+				<View style={[stylesMain.with80]}>
+					<View style={[stylesMain.containerTextTopInput]}>
+						<Text style={stylesMain.textTopInput}>Nome:</Text>
+					</View>
+					<TextInput //Name
+						style={[stylesMain.input, stylesMain.withFull]}
+						onFocus={() => setIsFocused(true)}
+						onBlur={() => {
+							setIsFocused(false);
+							if (!nameIsValid(userName)) {
+								setInsightName(true);
 							} else {
-								setErrorEmail(true);
+								setInsightName(false);
+								setErrorName(false);
 							}
-						} else {
-							if (userEmail === "") {
-								setInsightEmail(false);
-								setErrorEmail(false);
-							}
-						}
-					}}
-					returnKeyType="next" //define botão no teclado de proximo
-					ref={secondInputRef} //define a referencia
-					onSubmitEditing={() => {
-						thirdInputRef.current.focus(); // Move o foco para o segundo input
-					}}
-					onChangeText={(text) => {
-						setUserEmail(text.toLowerCase());
-						validateUserEmail(text);
-					}}
-					value={userEmail}
-					placeholder="Insira seu e-mail"
-					keyboardType="email-address"
-				/>
-				<Text //insightEmail
-					style={[
-						{ display: insightEmail ? "flex" : "none" },
-						{ color: errorEmail ? "#ff0000" : "#64748b" },
-					]}
-				>
-					E-mail deve ser no formato: exemplo@gmail.com
-				</Text>
-				<View style={stylesMain.containerTextTopInput}>
-					<Text style={stylesMain.textTopInput}>Senha:</Text>
-				</View>
-				<View
-					style={[
-						stylesMain.input,
-						stylesMain.withFull,
-						{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-						},
-					]}
-				>
-					<TextInput //First Password
-						style={{ width: "90%" }}
+						}}
+						returnKeyType="next" //define botão no teclado de próximo
+						ref={firstInputRef} //define a referencia
+						onSubmitEditing={() => {
+							secondInputRef.current.focus(); // Move o foco para o segundo input
+						}}
+						onChangeText={(text) => {
+							setUserName(text);
+						}}
+						value={userName}
+						placeholder="Insira seu Nome Completo"
+						maxLength={45}
+					/>
+					<Text //insight Name
+						style={[
+							{ display: insightName ? "flex" : "none" },
+							{ color: errorName ? "#ff0000" : "#64748b" },
+						]}
+					>
+						Insira o seu nome completo
+					</Text>
+					<View style={[stylesMain.containerTextTopInput]}>
+						<Text style={stylesMain.textTopInput}>E-mail:</Text>
+					</View>
+					<TextInput // Email
+						style={[stylesMain.input, stylesMain.withFull]}
+						maxLength={45}
 						onFocus={() => {
 							setIsFocused(true);
+							if (userEmail === "") {
+								setErrorEmail(false);
+							}
 						}}
 						onBlur={() => {
 							setIsFocused(false);
 							if (initialValidation) {
-								if (!insightPassword) {
-									setErrorPassword(false);
+								if (!insightEmail) {
+									setErrorEmail(false);
 								} else {
-									setErrorPassword(true);
+									setErrorEmail(true);
 								}
 							} else {
 								if (userEmail === "") {
-									setInsightPassword(false);
-									setErrorPassword(false);
+									setInsightEmail(false);
+									setErrorEmail(false);
 								}
 							}
 						}}
 						returnKeyType="next" //define botão no teclado de proximo
-						ref={thirdInputRef} //define a referencia
+						ref={secondInputRef} //define a referencia
 						onSubmitEditing={() => {
-							if (!insightPassword) {
-								setErrorPassword(false);
-								fourthInputRef.current.focus(); // Move o foco para o segundo input
-							} else {
-								if (initialValidation) {
-									setErrorPassword(true);
-									fourthInputRef.current.focus();
-								} else {
-									fourthInputRef.current.focus();
-								}
-							}
+							thirdInputRef.current.focus(); // Move o foco para o segundo input
 						}}
 						onChangeText={(text) => {
-							setUserPassWord(text);
-							validateUserPassword(text);
+							setUserEmail(text.toLowerCase());
+							validateUserEmail(text);
 						}}
-						value={userPassWord}
-						placeholder="Insira sua senha"
-						maxLength={30}
-						secureTextEntry={hiddenPassword}
+						value={userEmail}
+						placeholder="Insira seu e-mail"
+						keyboardType="email-address"
 					/>
-					<TouchableOpacity
-						onPress={() => {
-							setHiddenPassword(!hiddenPassword);
-						}}
+					<Text //insightEmail
+						style={[
+							{ display: insightEmail ? "flex" : "none" },
+							{ color: errorEmail ? "#ff0000" : "#64748b" },
+						]}
 					>
-						{hiddenPassword ? (
-							<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-						) : (
-							<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-						)}
-					</TouchableOpacity>
-				</View>
-				<Text //insightPasword
-					style={[
-						{ display: insightPassword ? "flex" : "none" },
-						{ color: errorPassword ? "#ff0000" : "#64748b" },
-					]}
-				>
-					Senha deve ter pelo menos menos um número, uma letra maiúscula, uma
-					minúscula, um carácter especial e pelo menos 8 dígitos.
-				</Text>
-				<View style={stylesMain.containerTextTopInput}>
-					<Text style={stylesMain.textTopInput}>Confirme:</Text>
-				</View>
-				<View
-					style={[
-						stylesMain.input,
-						stylesMain.withFull,
-						{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-						},
-					]}
-				>
-					<TextInput //Confirm Secund Password
-						style={{ width: "90%" }}
-						onFocus={() => {
-							setIsFocused(true);
-						}}
+						E-mail deve ser no formato: exemplo@gmail.com
+					</Text>
+					<View style={stylesMain.containerTextTopInput}>
+						<Text style={stylesMain.textTopInput}>Senha:</Text>
+					</View>
+					<View
+						style={[
+							stylesMain.input,
+							stylesMain.withFull,
+							{
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "space-between",
+							},
+						]}
+					>
+						<TextInput //First Password
+							style={{ width: "90%" }}
+							onFocus={() => {
+								setIsFocused(true);
+							}}
+							onBlur={() => {
+								setIsFocused(false);
+								if (initialValidation) {
+									if (!insightPassword) {
+										setErrorPassword(false);
+									} else {
+										setErrorPassword(true);
+									}
+								} else {
+									if (userEmail === "") {
+										setInsightPassword(false);
+										setErrorPassword(false);
+									}
+								}
+							}}
+							returnKeyType="next" //define botão no teclado de proximo
+							ref={thirdInputRef} //define a referencia
+							onSubmitEditing={() => {
+								if (!insightPassword) {
+									setErrorPassword(false);
+									fourthInputRef.current.focus(); // Move o foco para o segundo input
+								} else {
+									if (initialValidation) {
+										setErrorPassword(true);
+										fourthInputRef.current.focus();
+									} else {
+										fourthInputRef.current.focus();
+									}
+								}
+							}}
+							onChangeText={(text) => {
+								setUserPassWord(text);
+								validateUserPassword(text);
+							}}
+							value={userPassWord}
+							placeholder="Insira sua senha"
+							maxLength={30}
+							secureTextEntry={hiddenPassword}
+						/>
+						<TouchableOpacity
+							onPress={() => {
+								setHiddenPassword(!hiddenPassword);
+							}}
+						>
+							{hiddenPassword ? (
+								<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+							) : (
+								<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+							)}
+						</TouchableOpacity>
+					</View>
+					<Text //insightPasword
+						style={[
+							{ display: insightPassword ? "flex" : "none" },
+							{ color: errorPassword ? "#ff0000" : "#64748b" },
+						]}
+					>
+						Senha deve ter pelo menos menos um número, uma letra maiúscula, uma
+						minúscula, um carácter especial e pelo menos 8 dígitos.
+					</Text>
+					<View style={stylesMain.containerTextTopInput}>
+						<Text style={stylesMain.textTopInput}>Confirme:</Text>
+					</View>
+					<View
+						style={[
+							stylesMain.input,
+							stylesMain.withFull,
+							{
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "space-between",
+							},
+						]}
+					>
+						<TextInput //Confirm Secund Password
+							style={{ width: "90%" }}
+							onFocus={() => {
+								setIsFocused(true);
+							}}
+							onBlur={() => {
+								setIsFocused(false);
+								setInsightConfirm(!isEqualPassword(confirmPassWord));
+								//setErrorConfirm(!isEqualPassword(confirmPassWord))
+							}}
+							returnKeyType="next" //define botão no teclado de proximo
+							ref={fourthInputRef} //define a referencia
+							onSubmitEditing={() => {
+								fifthInputRef.current.focus(); // Move o foco para o segundo input
+							}}
+							onChangeText={(text) => {
+								setConfirmPassWord(text);
+							}}
+							value={confirmPassWord}
+							placeholder="Insira sua senha"
+							secureTextEntry={hiddenConfirm}
+							maxLength={30}
+						/>
+						<TouchableOpacity
+							onPress={() => {
+								setHiddenConfirm(!hiddenConfirm);
+							}}
+						>
+							{hiddenConfirm ? (
+								<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+							) : (
+								<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+							)}
+						</TouchableOpacity>
+					</View>
+					<Text //insightConfirmPasword
+						style={[
+							{ display: insightConfirm ? "flex" : "none" },
+							{ color: errorConfirm ? "#ff0000" : "#64748b" },
+						]}
+					>
+						As duas senhas devem ser iguais.
+					</Text>
+					<View style={[stylesMain.containerTextTopInput]}>
+						<Text style={stylesMain.textTopInput}>CPF:</Text>
+					</View>
+					<TextInput //CPF
+						style={[stylesMain.input, stylesMain.withFull]}
+						type={"cpf"}
+						value={cpf}
+						maxLength={14}
+						onFocus={() => setIsFocused(true)}
 						onBlur={() => {
 							setIsFocused(false);
-							setInsightConfirm(!isEqualPassword(confirmPassWord));
-							//setErrorConfirm(!isEqualPassword(confirmPassWord))
+							if (validateCpf(cpf)) {
+								setInsightCpf(false);
+							} else {
+								setInsightCpf(true);
+							}
 						}}
+						ref={fifthInputRef} //define a referencia
 						returnKeyType="next" //define botão no teclado de proximo
-						ref={fourthInputRef} //define a referencia
 						onSubmitEditing={() => {
-							fifthInputRef.current.focus(); // Move o foco para o segundo input
+							sixthInputRef.current.focus(); // Move o foco para o segundo input
 						}}
-						onChangeText={(text) => {
-							setConfirmPassWord(text);
-						}}
-						value={confirmPassWord}
-						placeholder="Insira sua senha"
-						secureTextEntry={hiddenConfirm}
-						maxLength={30}
+						onChangeText={(text) => formatarCpf(text)}
+						placeholder="Digite seu CPF"
 					/>
-					<TouchableOpacity
-						onPress={() => {
-							setHiddenConfirm(!hiddenConfirm);
-						}}
+					<Text //insightCPF
+						style={[
+							{ display: insightCpf ? "flex" : "none" },
+							{ color: errorCPF ? "#ff0000" : "#64748b" },
+						]}
 					>
-						{hiddenConfirm ? (
-							<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-						) : (
-							<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-						)}
+						CPF inválido
+					</Text>
+					<View style={[stylesMain.containerTextTopInput]}>
+						<Text style={stylesMain.textTopInput}>Endereço:</Text>
+					</View>
+					<TextInput //Endereço
+						style={[stylesMain.input, stylesMain.withFull]}
+						onFocus={() => setIsFocused(true)}
+						onBlur={() => {
+							setIsFocused(false);
+							if (!isValidateAddress(userAddress)) {
+								setInsightAddress(true);
+							} else {
+								setInsightAddress(false);
+							}
+						}}
+						ref={sixthInputRef} //define a referencia
+						/*onSubmitEditing={() => {
+							seventhInputRef.current.focus(); // Move o foco para o segundo input
+						}}*/
+						returnKeyType="next" //define botão no teclado de proximo
+						onChangeText={(text) => {
+							setUserAddress(text);
+						}}
+						value={userAddress}
+						placeholder="Insira seu endereço"
+						maxLength={255}
+					/>
+					<Text //insightAddress
+						style={[
+							{ display: insightAddress ? "flex" : "none" },
+							{ color: errorAddress ? "#ff0000" : "#64748b" },
+						]}
+					>
+						Insira o seu endereço
+					</Text>
+					{/*
+					<View style={[stylesMain.containerTextTopInput]}>
+						<Text style={stylesMain.textTopInput}>Telefone:</Text>
+					</View>
+					
+					<TextInput 																																										//Telefone
+						style={[stylesMain.input, stylesMain.withFull]}
+						onFocus={() => setIsFocused(true)}
+						onBlur={() => {
+							setIsFocused(false);
+							if (userTelefon === "") {
+								setInsightTelefon(true);
+							} else {
+								setInsightTelefon(false);
+							}
+						}}
+						ref={seventhInputRef} //define a referencia
+						returnKeyType="next" //define botão no teclado de proximo
+						onChangeText={(text) => {
+							setUserTelefon(applyMask(text));
+						}}
+						value={userTelefon}
+						placeholder="Insira seu endereço"
+						keyboardType="phone-pad"
+						maxLength={15}
+					/>
+					<Text 																																												//insightCPF
+						style={[
+							{ display: insightTelefon ? "flex" : "none" },
+							{ color: errorTelefon ? "#ff0000" : "#64748b" },
+						]}
+					>
+						Insira o seu endereço
+					</Text>*/}
+				</View>
+				<TouchableOpacity
+					onPress={() => {
+						testeConexaoFrontBack();
+						//salveUserInLocalStorage();
+					}}
+					style={[
+						stylesMain.buttonSemiRounded,
+						stylesMain.backgroundRed,
+						stylesMain.withFull,
+						stylesMain.with80,
+						{marginTop:20}
+					]}
+				>
+					<Text style={stylesMain.textoButtonWith}>Confirmar</Text>
+				</TouchableOpacity>
+				<Text>ou</Text>
+				<View style={[stylesMain.flexRow]}>
+					<TouchableOpacity
+						onPress={() => {}}
+						style={stylesMain.buttonSemiRounded}
+					>
+						<View style={stylesMain.containerIcon}>
+							<IconFacebook width={rem(2.5)} height={rem(2.5)} />
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => {}}
+						style={stylesMain.buttonSemiRounded}
+					>
+						<View style={stylesMain.containerIcon}>
+							<IconGoogle width={rem(2.25)} height={rem(2.25)} />
+						</View>
 					</TouchableOpacity>
 				</View>
-				<Text //insightConfirmPasword
-					style={[
-						{ display: insightConfirm ? "flex" : "none" },
-						{ color: errorConfirm ? "#ff0000" : "#64748b" },
-					]}
-				>
-					As duas senhas devem ser iguais.
-				</Text>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>CPF:</Text>
-				</View>
-				<TextInput //CPF
-					style={[stylesMain.input, stylesMain.withFull]}
-					type={"cpf"}
-					value={cpf}
-					maxLength={14}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => {
-						setIsFocused(false);
-						if (validateCpf(cpf)) {
-							setInsightCpf(false);
-						} else {
-							setInsightCpf(true);
-						}
-					}}
-					ref={fifthInputRef} //define a referencia
-					returnKeyType="next" //define botão no teclado de proximo
-					onSubmitEditing={() => {
-						sixthInputRef.current.focus(); // Move o foco para o segundo input
-					}}
-					onChangeText={(text) => formatarCpf(text)}
-					placeholder="Digite seu CPF"
-				/>
-				<Text //insightCPF
-					style={[
-						{ display: insightCpf ? "flex" : "none" },
-						{ color: errorCPF ? "#ff0000" : "#64748b" },
-					]}
-				>
-					CPF inválido
-				</Text>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>Endereço:</Text>
-				</View>
-				<TextInput //Endereço
-					style={[stylesMain.input, stylesMain.withFull]}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => {
-						setIsFocused(false);
-						if (!isValidateAddress(userAddress)) {
-							setInsightAddress(true);
-						} else {
-							setInsightAddress(false);
-						}
-					}}
-					ref={sixthInputRef} //define a referencia
-					/*onSubmitEditing={() => {
-						seventhInputRef.current.focus(); // Move o foco para o segundo input
-					}}*/
-					returnKeyType="next" //define botão no teclado de proximo
-					onChangeText={(text) => {
-						setUserAddress(text);
-					}}
-					value={userAddress}
-					placeholder="Insira seu endereço"
-					maxLength={255}
-				/>
-				<Text //insightAddress
-					style={[
-						{ display: insightAddress ? "flex" : "none" },
-						{ color: errorAddress ? "#ff0000" : "#64748b" },
-					]}
-				>
-					Insira o seu endereço
-				</Text>
-				{/*
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>Telefone:</Text>
-				</View>
-				
-				<TextInput 																																										//Telefone
-					style={[stylesMain.input, stylesMain.withFull]}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => {
-						setIsFocused(false);
-						if (userTelefon === "") {
-							setInsightTelefon(true);
-						} else {
-							setInsightTelefon(false);
-						}
-					}}
-					ref={seventhInputRef} //define a referencia
-					returnKeyType="next" //define botão no teclado de proximo
-					onChangeText={(text) => {
-						setUserTelefon(applyMask(text));
-					}}
-					value={userTelefon}
-					placeholder="Insira seu endereço"
-					keyboardType="phone-pad"
-					maxLength={15}
-				/>
-				<Text 																																												//insightCPF
-					style={[
-						{ display: insightTelefon ? "flex" : "none" },
-						{ color: errorTelefon ? "#ff0000" : "#64748b" },
-					]}
-				>
-					Insira o seu endereço
-				</Text>*/}
+			</ScrollView>
 			</View>
-			<TouchableOpacity
-				onPress={() => {
-					salveUserInLocalStorage();
-				}}
-				style={[
-					stylesMain.buttonSemiRounded,
-					stylesMain.backgroundRed,
-					stylesMain.withFull,
-					stylesMain.with80,
-				]}
-			>
-				<Text style={stylesMain.textoButtonWith}>Confirmar</Text>
-			</TouchableOpacity>
-			<Text>ou</Text>
-			<View style={[stylesMain.flexRow]}>
-				<TouchableOpacity
-					onPress={() => {}}
-					style={stylesMain.buttonSemiRounded}
-				>
-					<View style={stylesMain.containerIcon}>
-						<IconFacebook width={rem(2.5)} height={rem(2.5)} />
-					</View>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => {}}
-					style={stylesMain.buttonSemiRounded}
-				>
-					<View style={stylesMain.containerIcon}>
-						<IconGoogle width={rem(2.25)} height={rem(2.25)} />
-					</View>
-				</TouchableOpacity>
-			</View>
-		</ScrollView>
 	);
 }
 export const stylesRegistrarse = StyleSheet.create({
@@ -663,11 +716,14 @@ export const stylesRegistrarse = StyleSheet.create({
 		flex:1,
 		alignItems: "center",
 		backgroundColor: "#fff",
-		gap: 14,
-		paddingTop: 15,
-		paddingEnd: 15,
-		paddingLeft: "5%",
+		padding: "5%",
 	},
+	title:{
+		fontSize: NewRem(0.7),
+		color: '#ff0000', 
+		fontWeight:'bold',
+		marginVertical:10
+	}
 });
 
 export const styles = StyleSheet.create({
