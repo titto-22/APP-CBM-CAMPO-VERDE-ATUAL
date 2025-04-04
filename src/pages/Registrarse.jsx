@@ -35,8 +35,12 @@ import EyeOn from "../assets/eye.svg";
 export default function Registrarse({ navigation }) {
 	//controla o subir da tela ao exibir o teclado
 	const scrollRef = useRef(null);
-	const scrollToTop = () => {
-		scrollRef.current?.scrollTo({ y: -500, animated: true })	;
+	const scrollToTopCpf = () => {
+		scrollRef.current?.scrollTo({ y: 300, animated: true })	;
+	};
+
+	const scrollToTopConfirm = () => {
+		scrollRef.current?.scrollTo({ y: 150, animated: true })	;
 	};
 
 	//Variáveis do nome
@@ -446,6 +450,7 @@ export default function Registrarse({ navigation }) {
 						style={{ width: "90%" }}
 						onFocus={() => {
 							setIsFocused(true);
+							scrollToTopConfirm()
 						}}
 						onBlur={() => {
 							setIsFocused(false);
@@ -496,7 +501,7 @@ export default function Registrarse({ navigation }) {
 					maxLength={14}
 					onFocus={() => {
 						setIsFocused(true)
-						scrollToTop()
+						scrollToTopCpf()
 					}}
 					onBlur={() => {
 						setIsFocused(false);
@@ -565,6 +570,7 @@ export default function Registrarse({ navigation }) {
 					</TouchableOpacity>
 				</View>
 				 */}
+				 <View style={[{dispaly:isFocused?"flex":"none", marginBottom:'25%'}]}><Text> </Text></View>
 			</ScrollView>
 		</KeyboardAvoidingView>
 

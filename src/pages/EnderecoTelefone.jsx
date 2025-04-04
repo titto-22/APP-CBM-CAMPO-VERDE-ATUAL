@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput } from "react-native";
+import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { useState, useRef, useContext } from "react";
 import { AuthContext } from "../../App";
 import {
