@@ -33,31 +33,36 @@ import EyeOn from "../assets/eye.svg";
 
 
 export default function Registrarse({ navigation }) {
-	
+	//controla o subir da tela ao exibir o teclado
+	const scrollRef = useRef(null);
+	const scrollToTop = () => {
+		scrollRef.current?.scrollTo({ y: -500, animated: true })	;
+	};
+
 	//Variáveis do nome
-	const [userName, setUserName] = useState("");
+	const [userName, setUserName] = useState("humberto caio");
 	const [insightName, setInsightName] = useState(false);
 	const [errorName, setErrorName] = useState(false);
 
 	//variáveis do Email
-	const [userEmail, setUserEmail] = useState("");
+	const [userEmail, setUserEmail] = useState("teste@teste.com");
 	const [insightEmail, setInsightEmail] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
 	//Variáveis da senha primeiro input
-	const [userPassWord, setUserPassWord] = useState("");
+	const [userPassWord, setUserPassWord] = useState("96135151Ab!");
 	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 
 	//Variáveis da senha confirm input
-	const [confirmPassWord, setConfirmPassWord] = useState("");
+	const [confirmPassWord, setConfirmPassWord] = useState("96135151Ab!");
 	const [hiddenConfirm, setHiddenConfirm] = useState(true); //Mostrar ou ocultar senha
 	const [insightConfirm, setInsightConfirm] = useState(false);
 	const [errorConfirm, setErrorConfirm] = useState(false);
 
 	//Variáveis cpf input
-	const [cpf, setCpf] = useState("");
+	const [cpf, setCpf] = useState("04404846185");
 	const [insightCpf, setInsightCpf] = useState(false);
 	const [errorCPF, setErrorCPF] = useState(false);
 
@@ -244,11 +249,16 @@ export default function Registrarse({ navigation }) {
 
 
 	return (
-		<View style={stylesRegistrarse.containerMain}>
+		<KeyboardAvoidingView
+			style={stylesRegistrarse.containerMain}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
+		>
 			<ScrollView
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[{ gap: 10 }
-				]}
+				contentContainerStyle={{ gap: 10 }}
+				keyboardShouldPersistTaps="handled"
+				ref={scrollRef}
 			>
 				<View style={[stylesMain.withFull, stylesRegistrarse.alignItemsCenter]}>
 					<Text style={stylesRegistrarse.title}>Criar conta</Text>
@@ -257,7 +267,7 @@ export default function Registrarse({ navigation }) {
 					<Text style={stylesMain.textTopInput}>Nome:</Text>
 				</View>
 				<TextInput //Name
-					style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+					style={[stylesMain.input, stylesMain.withFull, insightName ? '' : stylesRegistrarse.marginBottom8]}
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => {
 						setIsFocused(false);
@@ -284,6 +294,7 @@ export default function Registrarse({ navigation }) {
 					style={[
 						{ display: insightName ? "flex" : "none" },
 						{ color: errorName ? "#ff0000" : "#64748b" },
+						insightName ? stylesRegistrarse.marginBottom8 : ''
 					]}
 				>
 					Insira o seu nome completo.
@@ -292,7 +303,7 @@ export default function Registrarse({ navigation }) {
 					<Text style={stylesMain.textTopInput}>E-mail:</Text>
 				</View>
 				<TextInput // Email
-					style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+					style={[stylesMain.input, insightEmail ? '' : stylesRegistrarse.marginBottom8, stylesMain.withFull]}
 					maxLength={45}
 					onFocus={() => {
 						setIsFocused(true);
@@ -332,6 +343,7 @@ export default function Registrarse({ navigation }) {
 					style={[
 						{ display: insightEmail ? "flex" : "none" },
 						{ color: errorEmail ? "#ff0000" : "#64748b" },
+						insightEmail ? stylesRegistrarse.marginBottom8 : ''
 					]}
 				>
 					E-mail deve ser no formato: exemplo@gmail.com
@@ -341,7 +353,7 @@ export default function Registrarse({ navigation }) {
 				</View>
 				<View
 					style={[
-						stylesMain.input, { marginBottom: "8%" },
+						stylesMain.input, insightPassword ? '' : stylesRegistrarse.marginBottom8,
 						stylesMain.withFull,
 						{
 							flexDirection: "row",
@@ -410,6 +422,7 @@ export default function Registrarse({ navigation }) {
 					style={[
 						{ display: insightPassword ? "flex" : "none" },
 						{ color: errorPassword ? "#ff0000" : "#64748b" },
+						insightPassword ? stylesRegistrarse.marginBottom8 : ''
 					]}
 				>
 					Senha deve ter pelo menos menos um número, uma letra maiúscula, uma
@@ -420,7 +433,7 @@ export default function Registrarse({ navigation }) {
 				</View>
 				<View
 					style={[
-						stylesMain.input, { marginBottom: "8%" },
+						stylesMain.input, insightConfirm ? '' : stylesRegistrarse.marginBottom8,
 						stylesMain.withFull,
 						{
 							flexDirection: "row",
@@ -468,6 +481,7 @@ export default function Registrarse({ navigation }) {
 					style={[
 						{ display: insightConfirm ? "flex" : "none" },
 						{ color: errorConfirm ? "#ff0000" : "#64748b" },
+						insightConfirm ? stylesRegistrarse.marginBottom8 : ''
 					]}
 				>
 					As duas senhas devem ser iguais.
@@ -476,11 +490,14 @@ export default function Registrarse({ navigation }) {
 					<Text style={stylesMain.textTopInput}>CPF:</Text>
 				</View>
 				<TextInput //CPF
-					style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+					style={[stylesMain.input, insightCpf ? '' : stylesRegistrarse.marginBottom8, stylesMain.withFull]}
 					type={"cpf"}
 					value={cpf}
 					maxLength={14}
-					onFocus={() => setIsFocused(true)}
+					onFocus={() => {
+						setIsFocused(true)
+						scrollToTop()
+					}}
 					onBlur={() => {
 						setIsFocused(false);
 						if (validateCpf(cpf)) {
@@ -501,6 +518,7 @@ export default function Registrarse({ navigation }) {
 					style={[
 						{ display: insightCpf ? "flex" : "none" },
 						{ color: errorCPF ? "#ff0000" : "#64748b" },
+						insightCpf ? stylesRegistrarse.marginBottom8 : ''
 					]}
 				>
 					CPF inválido
@@ -547,9 +565,8 @@ export default function Registrarse({ navigation }) {
 					</TouchableOpacity>
 				</View>
 				 */}
-				<View style={{ backgroundColor: '#fff', height: isFocused ? vh(40) : 0 }}><Text style={{ color: '#fff' }}> </Text></View>
 			</ScrollView>
-		</View>
+		</KeyboardAvoidingView>
 
 	);
 }
@@ -574,6 +591,9 @@ export const stylesRegistrarse = StyleSheet.create({
 	},
 	alignItemsCenter: {
 		alignItems: 'center'
+	},
+	marginBottom8: {
+		marginBottom: '8%',
 	}
 });
 

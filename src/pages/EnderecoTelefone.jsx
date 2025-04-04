@@ -18,7 +18,7 @@ import { stylesMain } from "./Login";
 
 
 export default function EnderecoTelefone({ route, navigation }) {
-
+  //dados da página anterior
   const dataUser = route.params;
 
   //ip de conexão com o banco de dados
@@ -35,18 +35,18 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [errorTelefon, setTelefon] = useState(false);
 
   const [isFocused, setIsFocused] = useState(false);
-	const firstInputRef = useRef(null);
-	const secondInputRef = useRef(null);
-	const thirdInputRef = useRef(null);
-	const fourthInputRef = useRef(null);
-	const fifthInputRef = useRef(null);
-	const sixthInputRef = useRef(null);
-	const seventhInputRef = useRef(null);
+  const firstInputRef = useRef(null);
+  const secondInputRef = useRef(null);
+  const thirdInputRef = useRef(null);
+  const fourthInputRef = useRef(null);
+  const fifthInputRef = useRef(null);
+  const sixthInputRef = useRef(null);
+  const seventhInputRef = useRef(null);
 
   //Variáveis do Telefone
-	const [phone, setPhone] = useState(""); //Mostrar ou ocultar senha
-	const [insightPhone, setInsightPhone] = useState(false);
-	const [errorPhone, setErrorPhone] = useState(false);
+  const [phone, setPhone] = useState(""); //Mostrar ou ocultar senha
+  const [insightPhone, setInsightPhone] = useState(false);
+  const [errorPhone, setErrorPhone] = useState(false);
 
   // ---------------------  TESTE CONEXÃO -------------------------------
 
@@ -92,74 +92,95 @@ export default function EnderecoTelefone({ route, navigation }) {
 
 
 
+
+  // Função para aplicar a máscara manualmente
+  const applyMaskPhone = (text) => {
+    let textlocal = text.replace(/\D/g, '');
+    let formatted = "";
+
+    if (textlocal.length > 10) {
+      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 3)}.${textlocal.substring(3, 7)}-${textlocal.substring(7, 11)}`;
+    } else if (textlocal.length > 6) {
+      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 6)}-${textlocal.substring(6, 10)}`;
+    } else if (textlocal.length > 2) {
+      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 6)}`;
+    } else if (textlocal.length > 0) {
+      formatted = textlocal.substring(0, 2)
+    } else {
+      formatted = '';
+    }
+
+    setPhone(formatted);
+  };
+
+  const validatePhoneNumber = (number) => {
+    const cleanedNumber = number.replace(/\D/g, ''); // Remove caracteres especiais
+    // Celular (11 dígitos) ou fixo (10 dígitos)
+    const isValid = /^(\d{10}|\d{11})$/.test(cleanedNumber);
+    return isValid;
+  };
+
   /*
-    // Função para aplicar a máscara manualmente
-    const applyMask = (text) => {
-      textlocal = text.replace(/\D/g, ''); // Remove tudo que não for dígito
-  
-      if (textlocal.length <= 10) {
-        // Máscara para telefone fixo: (99) 9999-9999
-        textlocal = textlocal.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-      } else {
-        // Máscara para celular: (99) 99999-9999
-        textlocal = textlocal.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+
+  function gravaLocal(){
+  let localCpf = cpf;
+      localCpf = localCpf.replace(/[^\d]+/g, "");
+      salveLocalName(userName);
+      salveLocalUser(userEmail.toLowerCase());
+      salveLocalPassword(userPassWord);
+      salveLocalCPF(localCpf);
       }
+ 
+  // Função para validar o número de telefone
   
-      return textlocal;
-    };
-  	
-    function gravaLocal(){
-    let localCpf = cpf;
-        localCpf = localCpf.replace(/[^\d]+/g, "");
-        salveLocalName(userName);
-        salveLocalUser(userEmail.toLowerCase());
-        salveLocalPassword(userPassWord);
-        salveLocalCPF(localCpf);
-        }
-  
-    // Função para validar o número de telefone
-    const validatePhoneNumber = (number) => {
-      const cleanedNumber = number.replace(/\D/g, ''); // Remove caracteres especiais
-      // Celular (11 dígitos) ou fixo (10 dígitos)
-      const isValid = /^(\d{10}|\d{11})$/.test(cleanedNumber);
-      return isValid;
-    };
-    */
+  */
   return (
-    <View style={stylesRegistrarse.containerMain}>
-      <ScrollView showsVerticalScrollIndicator={false}
-				contentContainerStyle={[{ gap: 10 }
-				]}>
-          <View style={[stylesMain.containerTextTopInput]}>
-                    <Text style={stylesMain.textTopInput}>Telefone:</Text>
-                  </View>
-                  <TextInput //Phone
-                    style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => {
-                      setIsFocused(false);
-                     
-                    }}
-                    returnKeyType="next" //define botão no teclado de próximo
-                    ref={firstInputRef} //define a referencia
-                    onSubmitEditing={() => {
-                      secondInputRef.current.focus(); // Move o foco para o segundo input
-                    }}
-                    onChangeText={(text) => {
-                      setPhone(text);
-                    }}
-                    value={phone}
-                    placeholder="Insira seu Telefone"
-                    maxLength={13}
-                  />
-                  <Text //insight Phone
-                    style={[
-                      { display: insightPhone ? "flex" : "none" },
-                      { color: errorPhone ? "#ff0000" : "#64748b" },
-                    ]}
-                  >
-                    Insira o seu nome completo.
-                  </Text>
+    <KeyboardAvoidingView
+      style={stylesRegistrarse.containerMain}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ gap: 10, width: vw(84) }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[stylesMain.containerTextTopInput,]}>
+          <Text style={stylesMain.textTopInput}>Telefone:</Text>
+        </View>
+        <TextInput //Phone
+          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setIsFocused(false);
+            if (!validatePhoneNumber(phone)) {
+              setInsightPhone(true)
+            } else {
+              setInsightAddress(false)
+              setErrorPhone(false)
+            }
+
+          }}
+          returnKeyType="next" //define botão no teclado de próximo
+          ref={firstInputRef} //define a referencia
+          onSubmitEditing={() => {
+            secondInputRef.current.focus(); // Move o foco para o segundo input
+          }}
+          onChangeText={(text) => {
+            applyMaskPhone(text);
+          }}
+          value={phone}
+          placeholder="Insira seu Telefone"
+          maxLength={16}
+        />
+        <Text //insight Phone
+          style={[
+            { display: insightPhone ? "flex" : "none" },
+            { color: errorPhone ? "#ff0000" : "#64748b" },
+          ]}
+        >
+          Insira o telefone com o formato do telefone correto, exemplo: (33)3333-3333 ou (99)99999-9999.
+        </Text>
         <Text>{dataUser.name}</Text>
 
         {/*
@@ -199,6 +220,6 @@ export default function EnderecoTelefone({ route, navigation }) {
                 */}
 
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
