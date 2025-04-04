@@ -281,7 +281,9 @@ export const stylesMain = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#94a3b8",
 		borderRadius: 4,
-		padding: rem(0.75),
+		padding: NewRem(0.2),
+		fontSize: NewRem(0.35),
+		height:45
 	},
 	textoButtonWith: {
 		fontSize: rem(1),

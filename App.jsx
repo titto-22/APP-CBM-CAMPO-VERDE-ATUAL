@@ -5,7 +5,7 @@ import { StyleSheet, Linking, Alert } from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import "react-native-gesture-handler";
-import {	createDrawerNavigator,	DrawerContentScrollView,	DrawerItemList,	DrawerItem,} from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem, } from "@react-navigation/drawer";
 
 import Login from "./src/pages/Login";
 import HomeEmergencias from "./src/pages/HomeEmergencias";
@@ -20,6 +20,7 @@ import {
 	getLocalExpirationDate,
 	resetLocalIncident,
 } from "./src/components/function";
+import EnderecoTelefone from "./src/pages/EnderecoTelefone";
 
 //Cria usuário para teste, tem que excluir depois quando for para produção
 createLoginInSecureStoreTest();
@@ -34,13 +35,13 @@ const validationTokenLogin = 30;
  */
 export const AuthContext = createContext({
 	isSignedIn: false,
-	setIsSignedIn: () => {},
+	setIsSignedIn: () => { },
 });
 
 /**
  * Contexto Ip de conexão com o banco de dados
  */
-export const ipContext=createContext('192.168.0.111')
+export const ipContext = createContext('172.31.0.1')
 
 
 
@@ -97,7 +98,7 @@ export default function App({ navigation }) {
 	/////    Inicia o serviço de validação  /////
 	////////////////////////////////////////////
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-				useEffect(() => {
+	useEffect(() => {
 		InitialService(validationTokenLogin);
 	}, []);
 
@@ -113,16 +114,16 @@ export default function App({ navigation }) {
 
 	return (
 		<AuthContext.Provider
-			value={{ 
+			value={{
 				isSignedIn,
 				setIsSignedIn: handleSetIsSignedIn,
-				ip:React.useContext(ipContext)
+				ip: React.useContext(ipContext)
 			}}
 		>
-			
+
 			<NavigationContainer>
 				<Drawer.Navigator
-					//initialRouteName='Login'
+					initialRouteName='Registrar-se'
 					screenOptions={styles.styleTitlePagesColorRedBgWhite}
 					drawerContent={(props) => (
 						<DrawerContentScrollView {...props}>
@@ -173,9 +174,13 @@ export default function App({ navigation }) {
 							<Drawer.Screen
 								name="Login"
 								component={Login}
-								//options={{ gestureEnabled: false }}
+							//options={{ gestureEnabled: false }}
 							/>
 							<Drawer.Screen name="Registrar-se" component={Registrarse} />
+							<Drawer.Screen name="EnderecoTelefone" component={EnderecoTelefone} options={{
+									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+									//headerShown: false, // Oculta o título no cabeçalho
+								}}/>
 						</>
 					)}
 				</Drawer.Navigator>

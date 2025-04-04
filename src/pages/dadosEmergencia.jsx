@@ -14,13 +14,12 @@ import { stylesMain } from "../pages/Login";
 import { getLocalCPF, getLocalName, rem, salveLocalIncident, removeIncident, getLocalIncident, resetLocalIncident } from "../components/function";
 
 
-function DadosEmergencia({                                                                  route, navigation }) {
-	console.log("Componente DadosEmergencia re-renderizou!");
+function DadosEmergencia({ route, navigation }) {
 
 	const dadosEmergencia = route.params;
-	
-	const localName=getLocalName()
-	const localCPF=getLocalCPF()
+
+	const localName = getLocalName()
+	const localCPF = getLocalCPF()
 
 	// Armazena valores sem causar re-renderização
 	const localAddressRef = useRef(dadosEmergencia.address || "");
@@ -43,9 +42,9 @@ function DadosEmergencia({                                                      
 	async function salveIncident(address, descripition) {
 		const existingIncidents = await getLocalIncident();
 		const newIncident = [localName.value, localCPF.value, dadosEmergencia.tipoEmergencia, address, descripition];
-	
+
 		let updatedIncidents;
-	
+
 		if (existingIncidents === null) {
 			// Nenhum incidente salvo, cria um novo array
 			updatedIncidents = [newIncident];
@@ -53,16 +52,16 @@ function DadosEmergencia({                                                      
 			// Já existem incidentes, adiciona o novo ao final
 			updatedIncidents = [...existingIncidents, newIncident];
 		}
-		
-		try{
+
+		try {
 			await salveLocalIncident(updatedIncidents);
 			Alert.alert("Sucesso", "Notificação de incidente salva com sucesso")
 			navigation.navigate("Emergências");
-		} catch (erro){
+		} catch (erro) {
 			console.error("Erro  ao salvar incidente", error)
 			Alert.alert("Erro  ao salvar incidente", error)
 		}
-		
+
 	}
 
 	return (
@@ -111,21 +110,21 @@ function DadosEmergencia({                                                      
 						returnKeyType="next" //define botão no teclado de próximo
 					/>
 					<TouchableOpacity
-									onPress={() => {
-										salveIncident(localAddressRef.current,localDescrepitionRef.current)
-										;
-									}}
-									style={[
-										stylesMain.buttonSemiRounded,
-										stylesMain.backgroundRed,
-										stylesMain.withFull,
-										stylesMain.with80,
-										{marginVertical:rem(0.5)}
-									]}
-									ref={thirdInputRef}
-								>
-									<Text style={stylesMain.textoButtonWith}>GERAR OCORRÊNCIA</Text>
-								</TouchableOpacity>
+						onPress={() => {
+							salveIncident(localAddressRef.current, localDescrepitionRef.current)
+								;
+						}}
+						style={[
+							stylesMain.buttonSemiRounded,
+							stylesMain.backgroundRed,
+							stylesMain.withFull,
+							stylesMain.with80,
+							{ marginVertical: rem(0.5) }
+						]}
+						ref={thirdInputRef}
+					>
+						<Text style={stylesMain.textoButtonWith}>GERAR OCORRÊNCIA</Text>
+					</TouchableOpacity>
 				</View>
 			</ScrollView>
 		</KeyboardAvoidingView>
