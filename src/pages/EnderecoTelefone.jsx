@@ -24,15 +24,15 @@ export default function EnderecoTelefone({ route, navigation }) {
   //ip de conexão com o banco de dados
   const { ip } = useContext(AuthContext)
 
-  //variáveis do Endereço
-  const [userAddress, setUserAddress] = useState("");
-  const [insightAddress, setInsightAddress] = useState(false);
-  const [errorAddress, setErrorAddress] = useState(false);
-
   //variáveis do Telefone
   const [userTelefon, setUserTelefon] = useState("");
   const [insightTelefon, setInsightTelefon] = useState(false);
   const [errorTelefon, setTelefon] = useState(false);
+  
+  //Variáveis do Endereço
+  const [userCEP, setUserCEP] = useState("");
+  const [insightCEP, setInsightCEP] = useState(false);
+  const [errorCEP, setErrorCEP] = useState(false);
 
   const [isFocused, setIsFocused] = useState(false);
   const firstInputRef = useRef(null);
@@ -44,9 +44,13 @@ export default function EnderecoTelefone({ route, navigation }) {
   const seventhInputRef = useRef(null);
 
   //Variáveis do Telefone
-  const [phone, setPhone] = useState(""); //Mostrar ou ocultar senha
+  const [phone, setPhone] = useState(""); 
   const [insightPhone, setInsightPhone] = useState(false);
   const [errorPhone, setErrorPhone] = useState(false);
+
+   
+  
+ 
 
   // ---------------------  TESTE CONEXÃO -------------------------------
 
@@ -120,6 +124,13 @@ export default function EnderecoTelefone({ route, navigation }) {
     return isValid;
   };
 
+  const validateAddress =(text) =>{
+    if(text.length<10){
+      return false
+    }
+    return true
+  }
+
   /*
 
   function gravaLocal(){
@@ -169,6 +180,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           onChangeText={(text) => {
             applyMaskPhone(text);
           }}
+          keyboardType="numeric"
           value={phone}
           placeholder="Insira seu Telefone"
           maxLength={16}
@@ -180,6 +192,78 @@ export default function EnderecoTelefone({ route, navigation }) {
           ]}
         >
           Insira o telefone com o formato do telefone correto, exemplo: (33)3333-3333 ou (99)99999-9999.
+        </Text>
+        <View style={[stylesMain.containerTextTopInput,]}>
+          <Text style={stylesMain.textTopInput}>CEP:</Text>
+        </View>
+        <TextInput //CEP
+          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setIsFocused(false);
+            if (!validateAddress(userCEP)) {
+              setInsightCEP(true)
+            } else {
+              setInsightCEP(false)
+              setErrorCEP(false)
+            }
+
+          }}
+          returnKeyType="next" //define botão no teclado de próximo
+          ref={secondInputRef} //define a referencia
+          onSubmitEditing={() => {
+            thirdInputRef.current.focus(); // Move o foco para o segundo input
+          }}
+          onChangeText={(text) => {
+            setUserCEP(text);
+          }}
+          value={userCEP}
+          placeholder="Insira seu CEP"
+          maxLength={11}
+        />
+        <Text //insight Address
+          style={[
+            { display: insightCEP ? "flex" : "none" },
+            { color: errorCEP ? "#ff0000" : "#64748b" },
+          ]}
+        >
+          CEP inválido, favor fornecer um CEP válido.
+        </Text>
+        <View style={[stylesMain.containerTextTopInput,]}>
+          <Text style={stylesMain.textTopInput}>Endereço:</Text>
+        </View>
+        <TextInput //Address
+          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setIsFocused(false);
+            if (!validateAddress(userAddress)) {
+              setInsightTelefon(true)
+            } else {
+              setInsightTelefon(false)
+              setTelefon(false)
+            }
+
+          }}
+          returnKeyType="next" //define botão no teclado de próximo
+          ref={thirdInputRef} //define a referencia
+          onSubmitEditing={() => {
+            //thirdInputRef.current.focus(); // Move o foco para o segundo input
+          }}
+          onChangeText={(text) => {
+            setUserAddress(text);
+          }}
+          value={userAddress}
+          placeholder="Insira seu Endereço"
+          maxLength={255}
+        />
+        <Text //insight Address
+          style={[
+            { display: insightAddress ? "flex" : "none" },
+            { color: errorAddress ? "#ff0000" : "#64748b" },
+          ]}
+        >
+          Insira o logradouro, nome da rua ou avenida.
         </Text>
         <Text>{dataUser.name}</Text>
 

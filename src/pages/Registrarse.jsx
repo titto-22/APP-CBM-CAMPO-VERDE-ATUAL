@@ -518,6 +518,7 @@ export default function Registrarse({ navigation }) {
 					}}
 					onChangeText={(text) => formatarCpf(text)}
 					placeholder="Digite seu CPF"
+					keyboardType="numeric"
 				/>
 				<Text //insightCPF
 					style={[
