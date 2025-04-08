@@ -29,12 +29,25 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [insightTelefon, setInsightTelefon] = useState(false);
   const [errorTelefon, setTelefon] = useState(false);
   
-  //Variáveis do Endereço
+  //Variáveis do CEP
   const [userCEP, setUserCEP] = useState("");
   const [insightCEP, setInsightCEP] = useState(false);
   const [errorCEP, setErrorCEP] = useState(false);
+  
+  //Variáveis do Endereço
+  const [userAddress, setUserAddress] = useState("");
+  const [insightAddress, setInsightAddress] = useState(false);
+  const [errorAddress, setErrorAddress] = useState(false);
+
+  //Variáveis do Numero
+  const [userNumber, setUserNumber] = useState("");
+  const [insightNumber, setInsightNumber] = useState(false);
+  const [errorNumber, setErrorNumber] = useState(false);
+
+
 
   const [isFocused, setIsFocused] = useState(false);
+
   const firstInputRef = useRef(null);
   const secondInputRef = useRef(null);
   const thirdInputRef = useRef(null);
@@ -95,11 +108,16 @@ export default function EnderecoTelefone({ route, navigation }) {
   // ---------------------  TESTE CONEXÃO -------------------------------
 
 
+  //função para ter apenas numero
+  const onlyNumber = (text) =>{
+    let result= text.replace(/\D/g, '');
+    return result
+  }
 
 
-  // Função para aplicar a máscara manualmente
+  // Função para aplicar a máscara manualmente no phone 
   const applyMaskPhone = (text) => {
-    let textlocal = text.replace(/\D/g, '');
+    let textlocal = onlyNumber(text)
     let formatted = "";
 
     if (textlocal.length > 10) {
@@ -118,7 +136,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   };
 
   const validatePhoneNumber = (number) => {
-    const cleanedNumber = number.replace(/\D/g, ''); // Remove caracteres especiais
+    const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
     // Celular (11 dígitos) ou fixo (10 dígitos)
     const isValid = /^(\d{10}|\d{11})$/.test(cleanedNumber);
     return isValid;
@@ -126,6 +144,13 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   const validateAddress =(text) =>{
     if(text.length<10){
+      return false
+    }
+    return true
+  }
+
+  const validateNumber =(text) =>{
+    if(text.length<1){
       return false
     }
     return true
@@ -180,7 +205,6 @@ export default function EnderecoTelefone({ route, navigation }) {
           onChangeText={(text) => {
             applyMaskPhone(text);
           }}
-          keyboardType="numeric"
           value={phone}
           placeholder="Insira seu Telefone"
           maxLength={16}
@@ -207,7 +231,6 @@ export default function EnderecoTelefone({ route, navigation }) {
               setInsightCEP(false)
               setErrorCEP(false)
             }
-
           }}
           returnKeyType="next" //define botão no teclado de próximo
           ref={secondInputRef} //define a referencia
@@ -221,7 +244,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           placeholder="Insira seu CEP"
           maxLength={11}
         />
-        <Text //insight Address
+        <Text //insight CEP
           style={[
             { display: insightCEP ? "flex" : "none" },
             { color: errorCEP ? "#ff0000" : "#64748b" },
@@ -248,7 +271,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           returnKeyType="next" //define botão no teclado de próximo
           ref={thirdInputRef} //define a referencia
           onSubmitEditing={() => {
-            //thirdInputRef.current.focus(); // Move o foco para o segundo input
+            fourthInputRef.current.focus(); // Move o foco para o segundo input
           }}
           onChangeText={(text) => {
             setUserAddress(text);
@@ -264,6 +287,41 @@ export default function EnderecoTelefone({ route, navigation }) {
           ]}
         >
           Insira o logradouro, nome da rua ou avenida.
+        </Text>
+        <View style={[stylesMain.containerTextTopInput,]}>
+          <Text style={stylesMain.textTopInput}>Numero:</Text>
+        </View>
+        <TextInput //Number
+          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setIsFocused(false);
+            if (!validateNumber(userNumber)) {
+              setInsightTelefon(true)
+            } else {
+              setInsightTelefon(false)
+              setTelefon(false)
+            }
+
+          }}
+          returnKeyType="next" //define botão no teclado de próximo
+          ref={fourthInputRef} //define a referencia
+          onSubmitEditing={() => {
+            //thirdInputRef.current.focus(); // Move o foco para o segundo input
+          }}
+          onChangeText={(text) => {
+            setUserNumber(text);
+          }}
+          value={userNumber}
+          placeholder="Insira o numero da casa"
+        />
+        <Text //insight Number
+          style={[
+            { display: insightNumber ? "flex" : "none" },
+            { color: errorNumber ? "#ff0000" : "#64748b" },
+          ]}
+        >
+          Insira o numero da casa.
         </Text>
         <Text>{dataUser.name}</Text>
 
