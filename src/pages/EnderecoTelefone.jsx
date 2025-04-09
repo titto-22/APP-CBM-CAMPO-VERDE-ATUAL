@@ -351,7 +351,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           errorState={errorComplementAddress}
           setErrorState={setErrorComplementAddress}
           setFocused={setIsFocused}
-          actionScroll={scrollToTopSmall}
+          actionScroll={scrollToTopBig}
         />
         <InputComplex 
           title="Cidade"
@@ -368,7 +368,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           setErrorState={setErrorCity}
           functionValidate={validateCity}
           setFocused={setIsFocused}
-          actionScroll={scrollToTopSmall}
+          actionScroll={scrollToTopBig}
         />
         <InputComplex
           title="Estado"

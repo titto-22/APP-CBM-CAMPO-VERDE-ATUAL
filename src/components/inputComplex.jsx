@@ -28,7 +28,7 @@ export default function InputComplex({
       <View style={[{width:'100%', backgroundColor:'transparent', transform:[{translateY:vh(1)}], marginLeft:8, alignItems:'flex-start', },]}>
         <Text style={[stylesMain.textTopInput, {backgroundColor:"#fff", zIndex: 999,}]}> {title}: </Text>
       </View>
-      <TextInput //Phone
+      <TextInput 
         style={[
           stylesMain.input, 
           stylesMain.withFull, 
