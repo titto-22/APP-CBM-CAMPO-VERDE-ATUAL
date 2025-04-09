@@ -1,4 +1,12 @@
-import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  Platform
+} from "react-native";
 import { useState, useRef, useContext } from "react";
 import { AuthContext } from "../../App";
 import {
@@ -15,6 +23,7 @@ import {
 } from "../components/function";
 import { stylesRegistrarse } from "./Registrarse";
 import { stylesMain } from "./Login";
+import InputComplex from "../components/inputComplex";
 
 
 export default function EnderecoTelefone({ route, navigation }) {
@@ -24,16 +33,16 @@ export default function EnderecoTelefone({ route, navigation }) {
   //ip de conexão com o banco de dados
   const { ip } = useContext(AuthContext)
 
-  //variáveis do Telefone
-  const [userTelefon, setUserTelefon] = useState("");
-  const [insightTelefon, setInsightTelefon] = useState(false);
-  const [errorTelefon, setTelefon] = useState(false);
-  
+  //Variáveis do Telefone
+  const [userPhone, setPhone] = useState("");
+  const [insightPhone, setInsightPhone] = useState(false);
+  const [errorPhone, setErrorPhone] = useState(false);
+
   //Variáveis do CEP
   const [userCEP, setUserCEP] = useState("");
   const [insightCEP, setInsightCEP] = useState(false);
   const [errorCEP, setErrorCEP] = useState(false);
-  
+
   //Variáveis do Endereço
   const [userStreet, setUserStreet] = useState("");
   const [insightStreet, setInsightStreet] = useState(false);
@@ -48,16 +57,26 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [userDistrict, setUserDistrict] = useState("");
   const [insightDistrict, setInsightDistrict] = useState(false);
   const [errorDistrict, setErrorDistrict] = useState(false);
+  
+  //Variáveis do Complemento
+  const [userComplementAddress, setUserComplementAddress] = useState("");
+  const [insightComplementAddress, setInsightComplementAddress] = useState(false);
+  const [errorComplementAddress, setErrorComplementAddress] = useState(false);
 
   //Variáveis do Cidade
   const [userCity, setUserCity] = useState("");
   const [insightCity, setInsightCity] = useState(false);
   const [errorCity, setErrorCity] = useState(false);
 
+  //Variáveis do Estado
+  const [userState, setUserState] = useState("");
+  const [insightState, setInsightState] = useState(false);
+  const [errorState, setErrorState] = useState(false);
 
-
+  //Controla um marginBootom condicional para facilitar a navegação
   const [isFocused, setIsFocused] = useState(false);
 
+  //Controla o mapeamento de "tab"
   const firstInputRef = useRef(null);
   const secondInputRef = useRef(null);
   const thirdInputRef = useRef(null);
@@ -65,15 +84,18 @@ export default function EnderecoTelefone({ route, navigation }) {
   const fifthInputRef = useRef(null);
   const sixthInputRef = useRef(null);
   const seventhInputRef = useRef(null);
+  const eighthInputRef = useRef(null);
+  const ninthInputRef = useRef(null);
 
-  //Variáveis do Telefone
-  const [phone, setPhone] = useState(""); 
-  const [insightPhone, setInsightPhone] = useState(false);
-  const [errorPhone, setErrorPhone] = useState(false);
+  const scrollRef = useRef(null);
+  const scrollToTopBig = () => {
+    scrollRef.current?.scrollTo({ y: vh(50), animated: true });
+  };
 
-   
-  
- 
+  const scrollToTopSmall = () => {
+    scrollRef.current?.scrollTo({ y: vh(15), animated: true });
+  };
+
 
   // ---------------------  TESTE CONEXÃO -------------------------------
 
@@ -117,20 +139,16 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   // ---------------------  TESTE CONEXÃO -------------------------------
 
-  
-
   //função para ter apenas numero
-  const onlyNumber = (text) =>{
-    let result= text.replace(/\D/g, '');
+  const onlyNumber = (text) => {
+    let result = text.replace(/\D/g, '');
     return result
   }
-
 
   // Função para aplicar a máscara manualmente no phone 
   const applyMaskPhone = (text) => {
     let textlocal = onlyNumber(text)
     let formatted = "";
-
     if (textlocal.length > 10) {
       formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 3)}.${textlocal.substring(3, 7)}-${textlocal.substring(7, 11)}`;
     } else if (textlocal.length > 6) {
@@ -142,7 +160,6 @@ export default function EnderecoTelefone({ route, navigation }) {
     } else {
       formatted = '';
     }
-
     setPhone(formatted);
   };
 
@@ -150,7 +167,6 @@ export default function EnderecoTelefone({ route, navigation }) {
   const applyMaskCEP = (text) => {
     let textlocal = onlyNumber(text)
     let formatted = "";
-
     if (textlocal.length > 5) {
       formatted = `${textlocal.substring(0, 5)}-${textlocal.substring(5, 8)}`;
     } else if (textlocal.length > 0) {
@@ -158,11 +174,10 @@ export default function EnderecoTelefone({ route, navigation }) {
     } else {
       formatted = '';
     }
-
     setUserCEP(formatted);
   };
 
-// ---------------------  Validações  -------------------------------
+  // ---------------------  Validações  -------------------------------
 
   const validatePhoneNumber = (number) => {
     const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
@@ -173,33 +188,42 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   const validateCEP = (number) => {
     const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
-    //criar validação;
-    return true;
+    if (cleanedNumber.length < 8) {
+      return false
+    }
+    return true
   };
 
-  const validateStreet =(text) =>{
-    if(text.length<1){
+  const validateStreet = (text) => {
+    if (text.length < 1) {
       return false
     }
     return true
   }
 
-  const validateNumber =(text) =>{
-    if(text.length<1){
+  const validateNumber = (text) => {
+    if (text.length < 1) {
       return false
     }
     return true
   }
 
-  const validateDistrict =(text) =>{
-    if(text.length<1){
+  const validateDistrict = (text) => {
+    if (text.length < 1) {
       return false
     }
     return true
   }
 
-  const validateCity =(text) =>{
-    if(text.length<1){
+  const validateCity = (text) => {
+    if (text.length < 1) {
+      return false
+    }
+    return true
+  }
+
+  const validateState = (text) => {
+    if (text.length < 1) {
       return false
     }
     return true
@@ -229,257 +253,161 @@ export default function EnderecoTelefone({ route, navigation }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 10, width: vw(84) }}
         keyboardShouldPersistTaps="handled"
+        ref={scrollRef}
       >
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>Telefone:</Text>
-        </View>
-        <TextInput //Phone
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validatePhoneNumber(phone)) {
-              setInsightPhone(true)
-            } else {
-              setInsightAddress(false)
-              setErrorPhone(false)
-            }
-
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={firstInputRef} //define a referencia
-          onSubmitEditing={() => {
-            secondInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            applyMaskPhone(text);
-          }}
-          value={phone}
-          placeholder="Insira seu Telefone"
-          maxLength={16}
+        <InputComplex 
+          title="Telefone"
+          placeholder="Insira seu telefone"
+          insightText="Insira o telefone com o formato do telefone correto, exemplo: (33)3333-3333 ou (99)99999-9999."
+          firstRef={firstInputRef}
+          secondRef={secondInputRef}
+          maxLengthInput={16}
+          valueState={userPhone}
+          setValueStateOrFunctionMask={applyMaskPhone}
+          insightState={insightPhone}
+          setInsightState={setInsightPhone}
+          errorState={errorPhone}
+          setErrorState={setErrorPhone}
+          functionValidate={validatePhoneNumber}
+          setFocused={setIsFocused}
         />
-        <Text //insight Phone
-          style={[
-            { display: insightPhone ? "flex" : "none" },
-            { color: errorPhone ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          Insira o telefone com o formato do telefone correto, exemplo: (33)3333-3333 ou (99)99999-9999.
-        </Text>
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>CEP:</Text>
-        </View>
-        <TextInput //CEP
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validateCEP(userCEP)) {
-              setInsightCEP(true)
-            } else {
-              setInsightCEP(false)
-              setErrorCEP(false)
-            }
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={secondInputRef} //define a referencia
-          onSubmitEditing={() => {
-            thirdInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            applyMaskCEP(text);
-          }}
-          value={userCEP}
+
+        <InputComplex 
+          title="CEP"
           placeholder="Insira seu CEP"
-          maxLength={11}
+          insightText="CEP inválido, favor fornecer um CEP válido."
+          firstRef={secondInputRef}
+          secondRef={thirdInputRef}
+          maxLengthInput={11}
+          valueState={userCEP}
+          setValueStateOrFunctionMask={applyMaskCEP}
+          insightState={insightCEP}
+          setInsightState={setInsightCEP}
+          errorState={errorCEP}
+          setErrorState={setErrorCEP}
+          functionValidate={validateCEP}
+          setFocused={setIsFocused}
         />
-        <Text //insight CEP
-          style={[
-            { display: insightCEP ? "flex" : "none" },
-            { color: errorCEP ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          CEP inválido, favor fornecer um CEP válido.
-        </Text>
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>Logradouro:</Text>
-        </View>
-        <TextInput //Street
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validateStreet(userStreet)) {
-              setInsightStreet(true)
-            } else {
-              setInsightStreet(false)
-              setErrorStreet(false)
-            }
-
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={thirdInputRef} //define a referencia
-          onSubmitEditing={() => {
-            fourthInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            setUserStreet(text);
-          }}
-          value={userStreet}
-          placeholder="Insira o nome da rua ou avenida"
-          maxLength={255}
+        <InputComplex 
+          title="Logradouro"
+          placeholder="Insira o nome da rua ou avenida."
+          insightText="Insira o logradouro, nome da rua ou avenida."
+          firstRef={thirdInputRef}
+          secondRef={fourthInputRef}
+          maxLengthInput={255}
+          valueState={userStreet}
+          setValueStateOrFunctionMask={setUserStreet}
+          insightState={insightStreet}
+          setInsightState={setInsightStreet}
+          errorState={errorStreet}
+          setErrorState={setErrorStreet}
+          functionValidate={validateStreet}
+          setFocused={setIsFocused}
         />
-        <Text //insight Street
-          style={[
-            { display: insightStreet ? "flex" : "none" },
-            { color: errorStreet ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          Insira o logradouro, nome da rua ou avenida.
-        </Text>
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>Numero:</Text>
-        </View>
-        <TextInput //Number
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validateNumber(userNumber)) {
-              setInsightNumber(true)
-            } else {
-              setInsightNumber(false)
-              setErrorNumber(false)
-            }
-
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={fourthInputRef} //define a referencia
-          onSubmitEditing={() => {
-            fifthInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            setUserNumber(text);
-          }}
-          value={userNumber}
+        <InputComplex 
+          title="Numero"
           placeholder="Insira o numero da casa."
+          insightText="Insira o numero da casa."
+          firstRef={fourthInputRef}
+          secondRef={fifthInputRef}
+          maxLengthInput={50}
+          valueState={userNumber}
+          setValueStateOrFunctionMask={setUserNumber}
+          insightState={insightNumber}
+          setInsightState={setInsightNumber}
+          errorState={errorNumber}
+          setErrorState={setErrorNumber}
+          functionValidate={validateNumber}
+          setFocused={setIsFocused}
         />
-        <Text //insight Number
-          style={[
-            { display: insightNumber ? "flex" : "none" },
-            { color: errorNumber ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          Insira o numero da casa.
-        </Text>
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>Bairro:</Text>
-        </View>
-        <TextInput //District
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validateDistrict(userDistrict)) {
-              setInsightDistrict(true)
-            } else {
-              setInsightDistrict(false)
-              setErrorDistrict(false)
-            }
-
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={fifthInputRef} //define a referencia
-          onSubmitEditing={() => {
-            sixthInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            setUserDistrict(text);
-          }}
-          value={userDistrict}
+        <InputComplex 
+          title="Bairro"
           placeholder="Insira o nome do bairro."
+          insightText="Insira o nome do bairro."
+          firstRef={fifthInputRef}
+          secondRef={sixthInputRef}
+          maxLengthInput={255}
+          valueState={userDistrict}
+          setValueStateOrFunctionMask={setUserDistrict}
+          insightState={insightDistrict}
+          setInsightState={setInsightDistrict}
+          errorState={errorDistrict}
+          setErrorState={setErrorDistrict}
+          functionValidate={validateDistrict}
+          setFocused={setIsFocused}
+          actionScroll={scrollToTopSmall}
         />
-        <Text //insight District
-          style={[
-            { display: insightDistrict ? "flex" : "none" },
-            { color: errorDistrict ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          Insira o nome do bairro.
-        </Text>
-        <View style={[stylesMain.containerTextTopInput,]}>
-          <Text style={stylesMain.textTopInput}>Cidade:</Text>
-        </View>
-        <TextInput //City
-          style={[stylesMain.input, { marginBottom: "8%" }, stylesMain.withFull]}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            setIsFocused(false);
-            if (!validateCity(userCity)) {
-              setInsightCity(true)
-            } else {
-              setInsightCity(false)
-              setErrorCity(false)
-            }
-
-          }}
-          returnKeyType="next" //define botão no teclado de próximo
-          ref={fifthInputRef} //define a referencia
-          onSubmitEditing={() => {
-            sixthInputRef.current.focus(); // Move o foco para o segundo input
-          }}
-          onChangeText={(text) => {
-            setUserCity(text);
-          }}
-          value={userDistrict}
+        <InputComplex 
+          title="Complemento"
+          placeholder="Insira complemento para seu endereço."
+          insightText="Insira complemento para seu endereço."
+          firstRef={sixthInputRef}
+          secondRef={seventhInputRef}
+          maxLengthInput={255}
+          valueState={userComplementAddress}
+          setValueStateOrFunctionMask={setUserComplementAddress}
+          insightState={insightComplementAddress}
+          setInsightState={setInsightComplementAddress}
+          errorState={errorComplementAddress}
+          setErrorState={setErrorComplementAddress}
+          setFocused={setIsFocused}
+          actionScroll={scrollToTopSmall}
+        />
+        <InputComplex 
+          title="Cidade"
           placeholder="Insira o nome da cidade."
+          insightText="Insira o nome da cidade."
+          firstRef={seventhInputRef}
+          secondRef={eighthInputRef}
+          maxLengthInput={255}
+          valueState={userCity}
+          setValueStateOrFunctionMask={setUserCity}
+          insightState={insightCity}
+          setInsightState={setInsightCity}
+          errorState={errorCity}
+          setErrorState={setErrorCity}
+          functionValidate={validateCity}
+          setFocused={setIsFocused}
+          actionScroll={scrollToTopSmall}
         />
-        <Text //insight District
-          style={[
-            { display: insightDistrict ? "flex" : "none" },
-            { color: errorDistrict ? "#ff0000" : "#64748b" },
-          ]}
-        >
-          Insira o nome da cidade.
-        </Text>
-        <Text>{dataUser.name}</Text>
-
-        {/*
-                <View style={[stylesMain.containerTextTopInput]}>
-                  <Text style={stylesMain.textTopInput}>Telefone:</Text>
-                </View>
-                
-                <TextInput 																																										//Telefone
-                  style={[stylesMain.input, {marginBottom: "8%"}, stylesMain.withFull]}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => {
-                    setIsFocused(false);
-                    if (userTelefon === "") {
-                      setInsightTelefon(true);
-                    } else {
-                      setInsightTelefon(false);
-                    }
-                  }}
-                  ref={seventhInputRef} //define a referencia
-                  returnKeyType="next" //define botão no teclado de proximo
-                  onChangeText={(text) => {
-                    setUserTelefon(applyMask(text));
-                  }}
-                  value={userTelefon}
-                  placeholder="Insira seu endereço"
-                  keyboardType="phone-pad"
-                  maxLength={15}
-                />
-                <Text 																																												//insightCPF
-                  style={[
-                    { display: insightTelefon ? "flex" : "none" },
-                    { color: errorTelefon ? "#ff0000" : "#64748b" },
-                  ]}
-                >
-                  Insira o seu endereço
-                </Text>
-                */}
-
+        <InputComplex
+          title="Estado"
+          placeholder="Insira o estado"
+          insightText="Insira o seu estado"
+          firstRef={eighthInputRef}
+          secondRef={ninthInputRef}
+          valueState={userState}
+          setValueStateOrFunctionMask={setUserState}
+          insightState={insightState}
+          setInsightState={setInsightState}
+          errorState={errorState}
+          setErrorState={setErrorState}
+          functionValidate={validateState}
+          setFocused={setIsFocused}
+          actionScroll={scrollToTopBig}
+        />
+        <View style={[stylesMain.withFull, stylesRegistrarse.alignItemsCenter]}>
+          <TouchableOpacity
+            onPress={() => {
+              checkToContinue();
+            }}
+            style={[
+              stylesMain.buttonSemiRounded,
+              stylesMain.backgroundRed,
+              stylesMain.withFull,
+              stylesMain.with80,
+              { marginTop: 20 }
+            ]}
+          >
+            <Text
+              style={stylesMain.textoButtonWith}
+              ref={ninthInputRef} //define a referencia
+            >
+              Confirmar
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[{ dispaly: isFocused ? "flex" : "none", marginBottom: '25%' }]}><Text> </Text></View>
       </ScrollView>
     </KeyboardAvoidingView>
   )

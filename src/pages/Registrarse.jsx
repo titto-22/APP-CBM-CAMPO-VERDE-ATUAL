@@ -28,6 +28,7 @@ import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
 import EyeOf from "../assets/eye-slash.svg";
 import EyeOn from "../assets/eye.svg";
+import InputComplex from "../components/inputComplex";
 
 
 
@@ -44,7 +45,7 @@ export default function Registrarse({ navigation }) {
 	};
 
 	//Variáveis do nome
-	const [userName, setUserName] = useState("humberto caio");
+	const [userName, setUserName] = useState("");
 	const [insightName, setInsightName] = useState(false);
 	const [errorName, setErrorName] = useState(false);
 
@@ -221,6 +222,7 @@ export default function Registrarse({ navigation }) {
 			setErrorCPF(true);
 			result = false;
 			fifthInputRef.current.focus();
+			scrollRef.current?.scrollTo({ y: -vh(200), animated: true })	;
 		}
 		if (!isEqualPassword(confirmPassWord)) {
 			setInsightConfirm(true);
@@ -264,94 +266,60 @@ export default function Registrarse({ navigation }) {
 				keyboardShouldPersistTaps="handled"
 				ref={scrollRef}
 			>
-				<View style={[stylesMain.withFull, stylesRegistrarse.alignItemsCenter]}>
+				<View style={[stylesMain.withFull, stylesRegistrarse.alignItemsCenter, {marginTop:'8%'}]}>
 					<Text style={stylesRegistrarse.title}>Criar conta</Text>
 				</View>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>Nome:</Text>
-				</View>
-				<TextInput //Name
-					style={[stylesMain.input, stylesMain.withFull, insightName ? '' : stylesRegistrarse.marginBottom8]}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => {
-						setIsFocused(false);
-						if (!nameIsValid(userName)) {
-							setInsightName(true);
-						} else {
-							setInsightName(false);
-							setErrorName(false);
-						}
-					}}
-					returnKeyType="next" //define botão no teclado de próximo
-					ref={firstInputRef} //define a referencia
-					onSubmitEditing={() => {
-						secondInputRef.current.focus(); // Move o foco para o segundo input
-					}}
-					onChangeText={(text) => {
-						setUserName(text);
-					}}
-					value={userName}
-					placeholder="Insira seu Nome Completo"
-					maxLength={45}
+				<InputComplex
+					title="Nome"
+          placeholder="Insira seu Nome Completo."
+          insightText="Insira seu nome completo."
+          firstRef={firstInputRef}
+          secondRef={secondInputRef}
+          maxLengthInput={50}
+          valueState={userName}
+          setValueStateOrFunctionMask={setUserName}
+          insightState={insightName}
+          setInsightState={setInsightName}
+          errorState={errorName}
+          setErrorState={setErrorName}
+          functionValidate={nameIsValid}
+          setFocused={setIsFocused}
 				/>
-				<Text //insight Name
-					style={[
-						{ display: insightName ? "flex" : "none" },
-						{ color: errorName ? "#ff0000" : "#64748b" },
-						insightName ? stylesRegistrarse.marginBottom8 : ''
-					]}
-				>
-					Insira o seu nome completo.
-				</Text>
-				<View style={[stylesMain.containerTextTopInput]}>
-					<Text style={stylesMain.textTopInput}>E-mail:</Text>
-				</View>
-				<TextInput // Email
-					style={[stylesMain.input, insightEmail ? '' : stylesRegistrarse.marginBottom8, stylesMain.withFull]}
-					maxLength={45}
-					onFocus={() => {
-						setIsFocused(true);
-						if (userEmail === "") {
-							setErrorEmail(false);
-						}
-					}}
-					onBlur={() => {
-						setIsFocused(false);
-						if (initialValidation) {
-							if (!insightEmail) {
-								setErrorEmail(false);
-							} else {
-								setErrorEmail(true);
-							}
-						} else {
-							if (userEmail === "") {
-								setInsightEmail(false);
-								setErrorEmail(false);
-							}
-						}
-					}}
-					returnKeyType="next" //define botão no teclado de proximo
-					ref={secondInputRef} //define a referencia
-					onSubmitEditing={() => {
-						thirdInputRef.current.focus(); // Move o foco para o segundo input
-					}}
-					onChangeText={(text) => {
-						setUserEmail(text.toLowerCase());
-						validateUserEmail(text);
-					}}
-					value={userEmail}
-					placeholder="Insira seu e-mail"
-					keyboardType="email-address"
+				<InputComplex
+					title="E-mail"
+          placeholder="Insira seu e-mail."
+          insightText="E-mail deve ser no formato: exemplo@exemplo.com"
+          firstRef={firstInputRef}
+          secondRef={secondInputRef}
+          maxLengthInput={100}
+          valueState={userEmail}
+          setValueStateOrFunctionMask={setUserEmail}
+          insightState={insightEmail}
+          setInsightState={setInsightEmail}
+          errorState={errorEmail}
+          setErrorState={setErrorEmail}
+          functionValidate={validateUserEmail}
+          setFocused={setIsFocused}
+					keyboard="email-address"
 				/>
-				<Text //insightEmail
-					style={[
-						{ display: insightEmail ? "flex" : "none" },
-						{ color: errorEmail ? "#ff0000" : "#64748b" },
-						insightEmail ? stylesRegistrarse.marginBottom8 : ''
-					]}
-				>
-					E-mail deve ser no formato: exemplo@gmail.com
-				</Text>
+				<InputComplex
+					title="Senha"
+          placeholder="Insira seu e-mail."
+          insightText="E-mail deve ser no formato: exemplo@exemplo.com"
+          firstRef={firstInputRef}
+          secondRef={secondInputRef}
+          maxLengthInput={100}
+          valueState={userEmail}
+          setValueStateOrFunctionMask={setUserEmail}
+          insightState={insightEmail}
+          setInsightState={setInsightEmail}
+          errorState={errorEmail}
+          setErrorState={setErrorEmail}
+          functionValidate={validateUserEmail}
+          setFocused={setIsFocused}
+					keyboard="email-address"
+				/>
+				
 				<View style={stylesMain.containerTextTopInput}>
 					<Text style={stylesMain.textTopInput}>Senha:</Text>
 				</View>
@@ -582,7 +550,7 @@ export const stylesRegistrarse = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		backgroundColor: "#fff",
-		padding: "8%",
+		paddingHorizontal: "8%",
 	},
 	title: {
 		fontSize: NewRem(0.7),

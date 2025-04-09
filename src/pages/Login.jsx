@@ -257,13 +257,13 @@ export const stylesMain = StyleSheet.create({
 		transform: [{ translateY: 13 }],
 		backgroundColor: "#fff",
 		zIndex: 999,
-		width: NewRem(2.3),
+		width: NewRem(2.5),
 		alignItems: "left",
 		color: "#94a3b8",
 	},
 	textTopInput: {
 		color: "#64748b",
-		fontSize: NewRem(0.35),
+		fontSize: 16,
 	},
 	textBold: {
 		fontWeight: "bold",
