@@ -87,26 +87,26 @@ export default function Registrarse({ navigation }) {
 
 	//Formata o CPF, coloca mascara
 	const formatarCpf = (text) => {
-		const numeros = text.replace(/\D/g, ""); // Remove caracteres não numéricos
+		const num = text.replace(/\D/g, ""); // Remove caracteres não numéricos
 		let formatted = "";
 
-		if (numeros.length > 0) {
-			formatted = numeros.substring(0, 3);
-			if (numeros.length > 3) formatted += ".";
+		if (num.length > 0) {
+			formatted = num.substring(0, 3);
+			if (num.length > 3) formatted += ".";
 		}
 
-		if (numeros.length > 3) {
-			formatted += numeros.substring(3, 6);
-			if (numeros.length > 6) formatted += ".";
+		if (num.length > 3) {
+			formatted += num.substring(3, 6);
+			if (num.length > 6) formatted += ".";
 		}
 
-		if (numeros.length > 6) {
-			formatted += numeros.substring(6, 9);
-			if (numeros.length > 9) formatted += "-";
+		if (num.length > 6) {
+			formatted += num.substring(6, 9);
+			if (num.length > 9) formatted += "-";
 		}
 
-		if (numeros.length > 9) {
-			formatted += numeros.substring(9, 11);
+		if (num.length > 9) {
+			formatted += num.substring(9, 11);
 		}
 
 		setCpf(formatted);

@@ -67,6 +67,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [userCity, setUserCity] = useState("");
   const [insightCity, setInsightCity] = useState(false);
   const [errorCity, setErrorCity] = useState(false);
+  const [ibge, setIbge] = useState("")
 
   //Variáveis do Estado
   const [userState, setUserState] = useState("");
@@ -177,6 +178,63 @@ export default function EnderecoTelefone({ route, navigation }) {
     setUserCEP(formatted);
   };
 
+  const  apiCEP = (cep) =>{
+    let clearCEP = onlyNumber(cep)
+      if(clearCEP.length==8){
+        fetch(`https://viacep.com.br/ws/${onlyNumber(clearCEP)}/json/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Erro na requisição: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("conexão Sucesso:", data);
+            console.log(typeof data.bairro)
+            if(data.erro){
+              setInsightCEP(true)
+            } else{
+              if(data.logradouro){
+                setUserStreet(data.logradouro)
+              }
+              if(data.bairro){
+                setUserDistrict(data.bairro)
+              }
+              if(data.complemento){
+                setUserComplementAddress(data.complemento)
+              }
+
+              if(data.estado){
+                setUserState(data.estado)
+              }
+              if(data.ibge){
+                setIbge(data.ibge)
+              }
+              if(data.localidade){
+                setUserCity(data.localidade)
+              }
+
+              if(data.uf){
+                setUserState(data.uf)
+              }
+
+            }
+          })
+          .catch((error) => {
+            console.error("Erro:", error);
+            // Lide com erros de requisição
+          })
+          .finally(() => {
+            ;
+          });
+      }
+  }
+
   // ---------------------  Validações  -------------------------------
 
   const validatePhoneNumber = (number) => {
@@ -191,7 +249,7 @@ export default function EnderecoTelefone({ route, navigation }) {
     if (cleanedNumber.length < 8) {
       return false
     }
-    return true
+    apiCEP(number)
   };
 
   const validateStreet = (text) => {
