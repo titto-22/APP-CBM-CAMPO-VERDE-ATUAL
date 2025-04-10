@@ -43,10 +43,11 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [insightCEP, setInsightCEP] = useState(false);
   const [errorCEP, setErrorCEP] = useState(false);
 
-  //Variáveis do Endereço
+  //Variáveis do Logradouro
   const [userStreet, setUserStreet] = useState("");
   const [insightStreet, setInsightStreet] = useState(false);
   const [errorStreet, setErrorStreet] = useState(false);
+  const [disableInputStreet, setDisableInputStreet] = useState(false)
 
   //Variáveis do Numero
   const [userNumber, setUserNumber] = useState("");
@@ -148,16 +149,16 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   // Função para aplicar a máscara manualmente no phone 
   const applyMaskPhone = (text) => {
-    let textlocal = onlyNumber(text)
+    let textLocal = onlyNumber(text)
     let formatted = "";
-    if (textlocal.length > 10) {
-      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 3)}.${textlocal.substring(3, 7)}-${textlocal.substring(7, 11)}`;
-    } else if (textlocal.length > 6) {
-      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 6)}-${textlocal.substring(6, 10)}`;
-    } else if (textlocal.length > 2) {
-      formatted = `(${textlocal.substring(0, 2)}) ${textlocal.substring(2, 6)}`;
-    } else if (textlocal.length > 0) {
-      formatted = textlocal.substring(0, 2)
+    if (textLocal.length > 10) {
+      formatted = `(${textLocal.substring(0, 2)}) ${textLocal.substring(2, 3)}.${textLocal.substring(3, 7)}-${textLocal.substring(7, 11)}`;
+    } else if (textLocal.length > 6) {
+      formatted = `(${textLocal.substring(0, 2)}) ${textLocal.substring(2, 6)}-${textLocal.substring(6, 10)}`;
+    } else if (textLocal.length > 2) {
+      formatted = `(${textLocal.substring(0, 2)}) ${textLocal.substring(2, 6)}`;
+    } else if (textLocal.length > 0) {
+      formatted = textLocal.substring(0, 2)
     } else {
       formatted = '';
     }
@@ -166,12 +167,12 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   //Função para aplicar a máscara manualmente no CEP 
   const applyMaskCEP = (text) => {
-    let textlocal = onlyNumber(text)
+    let textLocal = onlyNumber(text)
     let formatted = "";
-    if (textlocal.length > 5) {
-      formatted = `${textlocal.substring(0, 5)}-${textlocal.substring(5, 8)}`;
-    } else if (textlocal.length > 0) {
-      formatted = textlocal.substring(0, 5)
+    if (textLocal.length > 5) {
+      formatted = `${textLocal.substring(0, 5)}-${textLocal.substring(5, 8)}`;
+    } else if (textLocal.length > 0) {
+      formatted = textLocal.substring(0, 5)
     } else {
       formatted = '';
     }
@@ -195,12 +196,15 @@ export default function EnderecoTelefone({ route, navigation }) {
           })
           .then((data) => {
             console.log("conexão Sucesso:", data);
-            console.log(typeof data.bairro)
             if(data.erro){
               setInsightCEP(true)
+              setUserState("")
+              setDisableInputStreet(false)
             } else{
               if(data.logradouro){
+                setInsightCEP(false)
                 setUserStreet(data.logradouro)
+                setDisableInputStreet(true)
               }
               if(data.bairro){
                 setUserDistrict(data.bairro)
@@ -361,6 +365,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           setErrorState={setErrorStreet}
           functionValidate={validateStreet}
           setFocused={setIsFocused}
+          disableInput={disableInputStreet}
         />
         <InputComplex 
           title="Numero"

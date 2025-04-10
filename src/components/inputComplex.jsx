@@ -21,14 +21,21 @@ export default function InputComplex({
     functionValidate, 
     setFocused,
     actionScroll, 
-    keyboard 
+    keyboard, 
+    disableInput 
   }) {
   return (
     <View style={{ width: '100%' }}>
       <View style={[{width:'100%', backgroundColor:'transparent', transform:[{translateY:vh(1)}], marginLeft:8, alignItems:'flex-start', },]}>
         <Text style={[stylesMain.textTopInput, {backgroundColor:"#fff", zIndex: 999,}]}> {title}: </Text>
       </View>
-      <TextInput 
+      {disableInput ? (
+        <Text 
+        ref={firstRef}>
+          teste
+        </Text>
+      ):(
+        <TextInput 
         style={[
           stylesMain.input, 
           stylesMain.withFull, 
@@ -68,6 +75,7 @@ export default function InputComplex({
         {...(maxLengthInput ? { maxLength: maxLengthInput } : {})}
         {...(keyboard ? { keyboardType: keyboard } : {})}
       />
+      )}
       <Text //insight 
         style={[
           { display: insightState ? "flex" : "none" },
@@ -77,6 +85,7 @@ export default function InputComplex({
       >
         {insightText}
       </Text>
+      
     </View>
   )
 }
