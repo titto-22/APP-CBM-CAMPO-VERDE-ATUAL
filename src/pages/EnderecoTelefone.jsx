@@ -53,27 +53,31 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [userNumber, setUserNumber] = useState("");
   const [insightNumber, setInsightNumber] = useState(false);
   const [errorNumber, setErrorNumber] = useState(false);
-
+  
   //Variáveis do Bairro
   const [userDistrict, setUserDistrict] = useState("");
   const [insightDistrict, setInsightDistrict] = useState(false);
   const [errorDistrict, setErrorDistrict] = useState(false);
+  const [disableInputDistrict, setDisableInputDistrict] = useState(false)
   
   //Variáveis do Complemento
   const [userComplementAddress, setUserComplementAddress] = useState("");
   const [insightComplementAddress, setInsightComplementAddress] = useState(false);
   const [errorComplementAddress, setErrorComplementAddress] = useState(false);
+  const [disableInputComplementAddress, setDisableInputComplementAddress] = useState(false)
 
   //Variáveis do Cidade
   const [userCity, setUserCity] = useState("");
   const [insightCity, setInsightCity] = useState(false);
   const [errorCity, setErrorCity] = useState(false);
+  const [disableInputCity, setDisableInputCity] = useState(false)
   const [ibge, setIbge] = useState("")
 
   //Variáveis do Estado
   const [userState, setUserState] = useState("");
   const [insightState, setInsightState] = useState(false);
   const [errorState, setErrorState] = useState(false);
+  const [disableInputState, setDisableInputState] = useState(false)
 
   //Controla um marginBootom condicional para facilitar a navegação
   const [isFocused, setIsFocused] = useState(false);
@@ -201,29 +205,34 @@ export default function EnderecoTelefone({ route, navigation }) {
               setUserState("")
               setDisableInputStreet(false)
             } else{
+              setInsightCEP(false)
               if(data.logradouro){
-                setInsightCEP(false)
-                setUserStreet(data.logradouro)
+                setInsightStreet(false)
                 setDisableInputStreet(true)
+                setUserStreet(data.logradouro)
               }
               if(data.bairro){
+                setInsightDistrict(false)
+                setDisableInputDistrict(true)
                 setUserDistrict(data.bairro)
               }
               if(data.complemento){
+                setInsightComplementAddress(false)
+                setDisableInputComplementAddress(true)
                 setUserComplementAddress(data.complemento)
               }
-
-              if(data.estado){
-                setUserState(data.estado)
+              if(data.localidade){
+                setInsightCity(false)
+                setDisableInputCity(true)
+                setUserCity(data.localidade)
               }
               if(data.ibge){
                 setIbge(data.ibge)
               }
-              if(data.localidade){
-                setUserCity(data.localidade)
-              }
-
               if(data.uf){
+                
+                setInsightState(false)
+                setDisableInputState(true)
                 setUserState(data.uf)
               }
 
@@ -399,6 +408,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           functionValidate={validateDistrict}
           setFocused={setIsFocused}
           actionScroll={scrollToTopSmall}
+          disableInput={disableInputDistrict}
         />
         <InputComplex 
           title="Complemento"

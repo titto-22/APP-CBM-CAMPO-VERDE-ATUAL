@@ -30,10 +30,19 @@ export default function InputComplex({
         <Text style={[stylesMain.textTopInput, {backgroundColor:"#fff", zIndex: 999,}]}> {title}: </Text>
       </View>
       {disableInput ? (
-        <Text 
-        ref={firstRef}>
-          teste
-        </Text>
+        <View style={[
+          stylesMain.input, 
+          stylesMain.withFull, 
+          insightState ? '' : stylesRegistrarse.marginBottom8,
+          {zIndex: -1, justifyContent:'center'},
+        ]}>
+          <Text 
+            style={[stylesRegistrarse.alignItemsCenter, stylesMain.textTopInput ]}
+            ref={firstRef}
+          >
+            {valueState}
+          </Text>          
+        </View>
       ):(
         <TextInput 
         style={[

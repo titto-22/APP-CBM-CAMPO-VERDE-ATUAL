@@ -2,7 +2,7 @@ import { View, Text, TextInput,TouchableOpacity } from "react-native";
 import { useState, useRef, useContext } from "react";
 import { stylesRegistrarse } from "../pages/Registrarse";
 import { stylesMain } from "../pages/Login";
-import { vh } from "./function";
+import { NewRem, vh } from "./function";
 import EyeOf from "../assets/eye-slash.svg";
 import EyeOn from "../assets/eye.svg";
 import { rem } from "./function";
@@ -25,8 +25,7 @@ export default function InputHidden({
   setHiddenState,
   functionValidate,
   setFocused,
-  actionScroll,
-  keyboard
+  actionScroll
 }) {
   return (
     <View style={{ width: '100%' }}>
@@ -47,13 +46,14 @@ export default function InputHidden({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
+            padding:0
           },
           { zIndex: -1, fontSize: 16 },
         ]}
       >
         <TextInput
           style={[
-            {width:"90%"},
+            {width:"90%", padding: NewRem(0.2)},
           ]}
           onFocus={() => {
             setFocused(true)
@@ -86,11 +86,11 @@ export default function InputHidden({
           value={valueState}
           placeholder={placeholder}
           {...(maxLengthInput ? { maxLength: maxLengthInput } : {})}
-          {...(keyboard ? { keyboardType: keyboard } : {})}
           secureTextEntry={hiddenState}
+          keyboardType="default" 
         />
         <TouchableOpacity
-          onPress={() => {
+          onPress={() => {           
             setHiddenState(!hiddenState);
           }}
         >

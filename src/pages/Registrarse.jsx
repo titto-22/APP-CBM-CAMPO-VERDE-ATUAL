@@ -46,23 +46,23 @@ export default function Registrarse({ navigation }) {
 	};
 
 	//Variáveis do nome
-	const [userName, setUserName] = useState("");
+	const [userName, setUserName] = useState("Humberto Caio");
 	const [insightName, setInsightName] = useState(false);
 	const [errorName, setErrorName] = useState(false);
 
 	//variáveis do Email
-	const [userEmail, setUserEmail] = useState("");
+	const [userEmail, setUserEmail] = useState("teste@teste.com");
 	const [insightEmail, setInsightEmail] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
 	//Variáveis da senha primeiro input
-	const [userPassword, setUserPassword] = useState("");
+	const [userPassword, setUserPassword] = useState("96135151Ab!");
 	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 
 	//Variáveis da senha confirm input
-	const [confirmPassWord, setConfirmPassWord] = useState("");
+	const [confirmPassWord, setConfirmPassWord] = useState("96135151Ab!");
 	const [hiddenConfirm, setHiddenConfirm] = useState(true); //Mostrar ou ocultar senha
 	const [insightConfirm, setInsightConfirm] = useState(false);
 	const [errorConfirm, setErrorConfirm] = useState(false);
@@ -318,7 +318,6 @@ export default function Registrarse({ navigation }) {
           setErrorState={setErrorPassword}
           functionValidate={validateUserPassword}
           setFocused={setIsFocused}
-					keyboard="email-address"
 					hiddenState={hiddenPassword}
 					setHiddenState={setHiddenPassword}
 				/>
@@ -337,7 +336,6 @@ export default function Registrarse({ navigation }) {
           setErrorState={setErrorConfirm}
           functionValidate={isEqualPassword}
           setFocused={setIsFocused}
-					keyboard="email-address"
 					hiddenState={hiddenConfirm}
 					setHiddenState={setHiddenConfirm}
 				/>
