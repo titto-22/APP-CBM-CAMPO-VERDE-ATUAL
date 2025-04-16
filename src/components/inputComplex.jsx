@@ -62,7 +62,7 @@ export default function InputComplex({
           //Valida se foi passado uma função de validação
           //Caso sim executa
           if(functionValidate){
-            if (!functionValidate(valueState)) {
+            if (functionValidate(valueState)) {
               setInsightState(true)
             } else {
               setInsightState(false)
@@ -89,7 +89,8 @@ export default function InputComplex({
         style={[
           { display: insightState ? "flex" : "none" },
           { color: errorState ? "#ff0000" : "#64748b" },
-          insightState ? stylesRegistrarse.marginBottom8 : ''
+          insightState ? stylesRegistrarse.marginBottom8 : '',
+          {marginTop:5}
         ]}
       >
         {insightText}

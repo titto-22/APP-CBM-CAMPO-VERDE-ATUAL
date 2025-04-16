@@ -90,6 +90,7 @@ export default function InputHidden({
           keyboardType="default" 
         />
         <TouchableOpacity
+          style={{marginRight:10}}
           onPress={() => {           
             setHiddenState(!hiddenState);
           }}

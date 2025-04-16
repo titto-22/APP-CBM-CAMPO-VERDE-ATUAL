@@ -33,6 +33,9 @@ export default function EnderecoTelefone({ route, navigation }) {
   //ip de conexão com o banco de dados
   const { ip } = useContext(AuthContext)
 
+  //Controla verificação do CEP correto
+  const [isValidateCep, setIsValidateCEP] = useState(false)
+
   //Variáveis do Telefone
   const [userPhone, setPhone] = useState("");
   const [insightPhone, setInsightPhone] = useState(false);
@@ -82,7 +85,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   //Controla um marginBootom condicional para facilitar a navegação
   const [isFocused, setIsFocused] = useState(false);
 
-  //Controla o mapeamento de "tab"
+  //Controla o mapeamento de "tab" / "next" / "próximo"
   const firstInputRef = useRef(null);
   const secondInputRef = useRef(null);
   const thirdInputRef = useRef(null);
@@ -93,6 +96,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   const eighthInputRef = useRef(null);
   const ninthInputRef = useRef(null);
 
+  //Faz um scrol na tela para facilitar visualização
   const scrollRef = useRef(null);
   const scrollToTopBig = () => {
     scrollRef.current?.scrollTo({ y: vh(50), animated: true });
@@ -101,6 +105,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   const scrollToTopSmall = () => {
     scrollRef.current?.scrollTo({ y: vh(15), animated: true });
   };
+
 
 
   // ---------------------  TESTE CONEXÃO -------------------------------
@@ -183,6 +188,17 @@ export default function EnderecoTelefone({ route, navigation }) {
     setUserCEP(formatted);
   };
 
+
+/**Função apiCEP
+ * 
+ * Função responsável por chamar API VIACEP, carregando dados: logradouro, 
+ * bairro, cidade, estado e código ibge da cidade.
+ * @description Seta os valores dos estados logradouro, bairro, cidade, estado e 
+ * código ibge da cidade, depois seta os "setDisableInput***" como true, onde o 
+ * componente inputComplex altera a exibição de um textInput para um text.
+ * @param cep - Type Number - Recebe uma sequencia de 8 dígitos para consultar cep
+ * @returns void 
+ * */ 
   const  apiCEP = (cep) =>{
     let clearCEP = onlyNumber(cep)
       if(clearCEP.length==8){
@@ -194,6 +210,7 @@ export default function EnderecoTelefone({ route, navigation }) {
         })
           .then((response) => {
             if (!response.ok) {
+              setIsValidateCEP(false)
               throw new Error(`Erro na requisição: ${response.status}`);
             }
             return response.json();
@@ -202,10 +219,20 @@ export default function EnderecoTelefone({ route, navigation }) {
             console.log("conexão Sucesso:", data);
             if(data.erro){
               setInsightCEP(true)
-              setUserState("")
               setDisableInputStreet(false)
+              setDisableInputDistrict(false)
+              setDisableInputComplementAddress(false)
+              setDisableInputCity(false)
+              setDisableInputState(false)
+              setUserStreet("")
+              setUserDistrict("")
+              setUserComplementAddress("")
+              setUserCity("")
+              setUserState("")
+              setIsValidateCEP(false)
             } else{
               setInsightCEP(false)
+              setIsValidateCEP(true)
               if(data.logradouro){
                 setInsightStreet(false)
                 setDisableInputStreet(true)
@@ -218,7 +245,6 @@ export default function EnderecoTelefone({ route, navigation }) {
               }
               if(data.complemento){
                 setInsightComplementAddress(false)
-                setDisableInputComplementAddress(true)
                 setUserComplementAddress(data.complemento)
               }
               if(data.localidade){
@@ -235,20 +261,18 @@ export default function EnderecoTelefone({ route, navigation }) {
                 setDisableInputState(true)
                 setUserState(data.uf)
               }
-
+              fourthInputRef.current.focus()
             }
           })
           .catch((error) => {
             console.error("Erro:", error);
             // Lide com erros de requisição
           })
-          .finally(() => {
-            ;
-          });
+          .finally(() => {});
       }
   }
 
-  // ---------------------  Validações  -------------------------------
+  // -------------------/////  Validações  \\\\\\-------------------------------
 
   const validatePhoneNumber = (number) => {
     const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
@@ -300,6 +324,51 @@ export default function EnderecoTelefone({ route, navigation }) {
     return true
   }
 
+  const checkToContinue = () => {
+    let result = true
+    if(!validateState(userState)){
+      result=false
+      setInsightState(true)
+      setErrorState(true)
+      seventhInputRef.current.focus()
+    }
+    if(!validateCity(userCity)){
+      result=false
+      setInsightCity(true)
+      setErrorCity(true)
+      seventhInputRef.current.focus()
+    }
+    if(!validateDistrict(userDistrict)){
+      result=false
+      setInsightDistrict(true)
+      setErrorDistrict(true)
+      fifthInputRef.current.focus()
+    }
+    if(!validateNumber(userNumber)){
+      result=false
+      setInsightNumber(true)
+      setErrorNumber(true)
+      fourthInputRef.current.focus()
+    }
+    if(!validateStreet(userStreet)){
+      result=false
+      setInsightStreet(true)
+      setErrorStreet(true)
+      thirdInputRef.current.focus()
+    }
+    if(!isValidateCep){
+      result=false
+      setInsightCEP(true)
+      setErrorCEP(true)
+      secondInputRef.current.focus()
+    }
+    if(!validatePhoneNumber(userPhone)){
+      result=false
+      setInsightPhone(true)
+      setErrorPhone(true)
+      firstInputRef.current.focus()
+    }
+  }
   /*
 
   function gravaLocal(){
@@ -425,6 +494,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           setErrorState={setErrorComplementAddress}
           setFocused={setIsFocused}
           actionScroll={scrollToTopBig}
+          disableInput={disableInputComplementAddress}
         />
         <InputComplex 
           title="Cidade"
@@ -442,6 +512,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           functionValidate={validateCity}
           setFocused={setIsFocused}
           actionScroll={scrollToTopBig}
+          disableInput={disableInputCity}
         />
         <InputComplex
           title="Estado"
@@ -458,6 +529,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           functionValidate={validateState}
           setFocused={setIsFocused}
           actionScroll={scrollToTopBig}
+          disableInput={disableInputState}
         />
         <View style={[stylesMain.withFull, stylesRegistrarse.alignItemsCenter]}>
           <TouchableOpacity
