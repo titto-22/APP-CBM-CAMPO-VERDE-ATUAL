@@ -54,7 +54,7 @@ Utilizaremos o [ORM Prisma](https://www.prisma.io/docs/getting-started/setup-pri
 
 ### Preparações
 
-Inicialmente é necessário instalar o `docker` e o `prima`.
+Inicialmente é necessário instalar o `docker` e o `prisma`.
 
 ```javascript
 //Instalação do prisma

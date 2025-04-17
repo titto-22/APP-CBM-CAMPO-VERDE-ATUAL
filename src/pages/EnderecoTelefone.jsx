@@ -384,7 +384,6 @@ export default function EnderecoTelefone({ route, navigation }) {
     // ---------------------  CONEXÃO BACKEND -------------------------------
 
     function conexaoFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge, cep  ) {
-      console.log(userPhone) 
       const userData = {
         userName: name,
         cpf: onlyNumber(cpf),
@@ -402,10 +401,9 @@ export default function EnderecoTelefone({ route, navigation }) {
       if(complementAddress){
         userData.addressComp = complementAddress
       }
-      //console.log(userData)
       const baseURL = `http://${ip}:3333`;
   
-      fetch(`${baseURL}/user`, {
+      fetch(`${baseURL}/create-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
