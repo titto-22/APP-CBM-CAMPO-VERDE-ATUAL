@@ -5,7 +5,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Platform
+  Platform,
+  Alert
 } from "react-native";
 import { useState, useRef, useContext } from "react";
 import { AuthContext } from "../../App";
@@ -105,50 +106,6 @@ export default function EnderecoTelefone({ route, navigation }) {
   const scrollToTopSmall = () => {
     scrollRef.current?.scrollTo({ y: vh(15), animated: true });
   };
-
-
-
-  // ---------------------  TESTE CONEXÃO -------------------------------
-
-  function testeConexaoFrontBack() {
-    const userData = {
-      userName: "Teste",
-      cpf: "04404846185",
-      telephone: "06645232",
-      email: "teste@teste.com",
-      password: "123456",
-      addressFull: 'rua teste, numeor teste, bairro teste, complemente completamete incompleto, city: starcity, Mato Grande, Minas unicas, brazil com z de zorrrrrro'
-    };
-
-    const baseURL = `http://${ip}:3333`;
-
-    fetch(`${baseURL}/user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Sucesso:", data);
-        // Faça algo com a resposta do servidor
-      })
-      .catch((error) => {
-        console.error("Erro:", error);
-        // Lide com erros de requisição
-      })
-      .finally(() => {
-        setLoadingTeste(false);
-      });
-  }
-
-  // ---------------------  TESTE CONEXÃO -------------------------------
 
   //função para ter apenas numero
   const onlyNumber = (text) => {
@@ -272,7 +229,7 @@ export default function EnderecoTelefone({ route, navigation }) {
       }
   }
 
-  // -------------------/////  Validações  \\\\\\-------------------------------
+  // -------------------/////  VALIDAÇÕES  \\\\\\-------------------------------
 
   const validatePhoneNumber = (number) => {
     const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
@@ -324,8 +281,12 @@ export default function EnderecoTelefone({ route, navigation }) {
     return true
   }
 
+  // -------------------/////  CHECAGEM FINAL ANTES DE FAZER A REQUISIÇÃO  \\\\\\-------------------------------
+
   const checkToContinue = () => {
     let result = true
+    let error=false
+    let textError="Favor conferir os seguintes dados na tela de registro: "
     if(!validateState(userState)){
       result=false
       setInsightState(true)
@@ -368,7 +329,86 @@ export default function EnderecoTelefone({ route, navigation }) {
       setErrorPhone(true)
       firstInputRef.current.focus()
     }
+    if(!dataUser.name){
+      result=false
+      error=true
+      textError+='nome, '
+    }
+    if(!dataUser.email){
+      result=false
+      error=true
+      textError+='e-mail, '
+    }
+    if(!dataUser.password){
+      result=false
+      error=true
+      textError+='senha, '
+    }
+    if(!dataUser.cpf){
+      result=false
+      error=true
+      textError+='CPF, '
+    }
+    //MOnta o texto com ponto final
+    textError=textError.substring(0,(textError.length-2))+'.'
+
+    //Após validar todos os dados preenchidos vai fazer requisição 
+    // para o backend da criação do usuário 
+    if(result){
+
+
+    } 
+    //Caso tenha algum erro nos dados da tela anterior retorna um alerta 
+    // indicando qual o campo com erro.
+    else{
+      if(error){
+        Alert.alert(textError)
+      }
+    }
   }
+
+    // ---------------------  CONEXÃO BAKEND -------------------------------
+
+    function conexaoFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge  ) {
+      const userData = {
+        userName: name,
+        cpf: onlyNumber(cpf),
+        telephone: onlyNumber(telephone),
+        email: email,
+        password: password,
+        addressFull: 'rua teste, numeor teste, bairro teste, complemente completamete incompleto, city: starcity, Mato Grande, Minas unicas, brazil com z de zorrrrrro'
+      };
+  
+      const baseURL = `http://${ip}:3333`;
+  
+      fetch(`${baseURL}/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Sucesso:", data);
+          // Faça algo com a resposta do servidor
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          // Lide com erros de requisição
+        })
+        .finally(() => {
+          setLoadingTeste(false);
+        });
+    }
+  
+    // ---------------------  TESTE CONEXÃO -------------------------------
+
   /*
 
   function gravaLocal(){
