@@ -47,7 +47,7 @@ export default function InputComplex({
         <TextInput 
         style={[
           stylesMain.input, 
-          stylesMain.withFull, 
+          {width:'99%'}, 
           insightState ? '' : stylesRegistrarse.marginBottom8,
           {zIndex: -1, fontSize:16},
         ]}

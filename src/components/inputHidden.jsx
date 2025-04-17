@@ -41,12 +41,12 @@ export default function InputHidden({
       <View
         style={[
           stylesMain.input, insightState ? '' : stylesRegistrarse.marginBottom8,
-          stylesMain.withFull,
           {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            padding:0
+            padding:0, 
+            width:'99%'
           },
           { zIndex: -1, fontSize: 16 },
         ]}
