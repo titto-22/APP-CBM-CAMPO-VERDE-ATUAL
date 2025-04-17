@@ -355,7 +355,21 @@ export default function EnderecoTelefone({ route, navigation }) {
     //Após validar todos os dados preenchidos vai fazer requisição 
     // para o backend da criação do usuário 
     if(result){
-
+      conexaoFrontBack(
+        dataUser.name,
+        dataUser.cpf,
+        userPhone,
+        dataUser.email,
+        dataUser.password,
+        userStreet,
+        userNumber, 
+        userComplementAddress,
+        userDistrict,
+        userCity,
+        userState,
+        ibge,
+        userCEP
+      )
 
     } 
     //Caso tenha algum erro nos dados da tela anterior retorna um alerta 
@@ -367,18 +381,28 @@ export default function EnderecoTelefone({ route, navigation }) {
     }
   }
 
-    // ---------------------  CONEXÃO BAKEND -------------------------------
+    // ---------------------  CONEXÃO BACKEND -------------------------------
 
-    function conexaoFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge  ) {
+    function conexaoFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge, cep  ) {
+      console.log(userPhone) 
       const userData = {
         userName: name,
         cpf: onlyNumber(cpf),
-        telephone: onlyNumber(telephone),
+        addressStreet:street,
+        addressNumber:number,
+        addressDistrict:district,
+        addressCity:city,
+        addressState:state,
+        addressCEP:cep,
+        addressIbge:ibge,
+        phone: onlyNumber(telephone),
         email: email,
-        password: password,
-        addressFull: 'rua teste, numeor teste, bairro teste, complemente completamete incompleto, city: starcity, Mato Grande, Minas unicas, brazil com z de zorrrrrro'
+        password: password
       };
-  
+      if(complementAddress){
+        userData.addressComp = complementAddress
+      }
+      //console.log(userData)
       const baseURL = `http://${ip}:3333`;
   
       fetch(`${baseURL}/user`, {
@@ -403,7 +427,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           // Lide com erros de requisição
         })
         .finally(() => {
-          setLoadingTeste(false);
+          console.log("final da conexão")
         });
     }
   

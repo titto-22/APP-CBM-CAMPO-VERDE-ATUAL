@@ -62,7 +62,7 @@ export default function InputComplex({
           //Valida se foi passado uma função de validação
           //Caso sim executa
           if(functionValidate){
-            if (functionValidate(valueState)) {
+            if (!functionValidate(valueState)) {
               setInsightState(true)
             } else {
               setInsightState(false)
