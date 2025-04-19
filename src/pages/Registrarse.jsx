@@ -68,7 +68,7 @@ export default function Registrarse({ navigation }) {
 	const [errorConfirm, setErrorConfirm] = useState(false);
 
 	//Variáveis cpf input
-	const [cpf, setCpf] = useState("04404846185");
+	const [cpf, setCpf] = useState("68258849050");
 	const [insightCpf, setInsightCpf] = useState(false);
 	const [errorCPF, setErrorCPF] = useState(false);
 

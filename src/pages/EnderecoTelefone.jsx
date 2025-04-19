@@ -38,12 +38,12 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [isValidateCep, setIsValidateCEP] = useState(false)
 
   //Variáveis do Telefone
-  const [userPhone, setPhone] = useState("");
+  const [userPhone, setPhone] = useState("65996753814");
   const [insightPhone, setInsightPhone] = useState(false);
   const [errorPhone, setErrorPhone] = useState(false);
 
   //Variáveis do CEP
-  const [userCEP, setUserCEP] = useState("");
+  const [userCEP, setUserCEP] = useState("78844548");
   const [insightCEP, setInsightCEP] = useState(false);
   const [errorCEP, setErrorCEP] = useState(false);
 
@@ -54,7 +54,7 @@ export default function EnderecoTelefone({ route, navigation }) {
   const [disableInputStreet, setDisableInputStreet] = useState(false)
 
   //Variáveis do Numero
-  const [userNumber, setUserNumber] = useState("");
+  const [userNumber, setUserNumber] = useState("1");
   const [insightNumber, setInsightNumber] = useState(false);
   const [errorNumber, setErrorNumber] = useState(false);
   
@@ -173,7 +173,7 @@ export default function EnderecoTelefone({ route, navigation }) {
             return response.json();
           })
           .then((data) => {
-            console.log("conexão Sucesso:", data);
+            console.log("Sucesso conexão com Api VIACEP", data);
             if(data.erro){
               setInsightCEP(true)
               setDisableInputStreet(false)
@@ -213,7 +213,6 @@ export default function EnderecoTelefone({ route, navigation }) {
                 setIbge(data.ibge)
               }
               if(data.uf){
-                
                 setInsightState(false)
                 setDisableInputState(true)
                 setUserState(data.uf)
@@ -410,31 +409,37 @@ export default function EnderecoTelefone({ route, navigation }) {
         },
         body: JSON.stringify(userData),
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Sucesso:", data);
-          // Faça algo com a resposta do servidor
-        })
-        .catch((error) => {
-          console.error("Erro:", error);
-          // Lide com erros de requisição
-        })
-        .finally(() => {
-          console.log("final da conexão")
-        });
-    }
+      .then((response) => {
+        if (!response.ok) {
+          //console.log(response)
+            return response.json().then(err => { // Tenta ler o corpo JSON de erro
+                err.status=response.status
+                throw err; // Rejoga o erro com o corpo JSON
+            });
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Sucesso conexão: ", data, 'usuário criado');
+        // Faça algo com a resposta de sucesso do servidor, como redirecionar o usuário
+
+    })
+    .catch((error) => {
+        console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
+        Alert.alert("Atenção",`${error.message}, vá para tela de login ou verifique os dados e tente novamente.`)
+        
+    })
+    .finally(() => {
+        console.log("final da conexão")
+    });
+}
   
     // ---------------------  TESTE CONEXÃO -------------------------------
 
   /*
 
   function gravaLocal(){
-  let localCpf = cpf;
+    let localCpf = cpf;
       localCpf = localCpf.replace(/[^\d]+/g, "");
       salveLocalName(userName);
       salveLocalUser(userEmail.toLowerCase());
