@@ -74,11 +74,11 @@ export const handleCall = () => {
   }
   export {salveLocalLogin}
 
-  async function salveLocalUser(user) {
+  async function salveLocalEmailUser(user) {
     await SecureStore.setItemAsync('appCbmUser',user)
     console.log('User salve')
   }
-  export{salveLocalUser}
+  export{salveLocalEmailUser}
 
   async function salveLocalPassword(password) {
     await SecureStore.setItemAsync('appCbmPassword',password)
@@ -104,20 +104,62 @@ export const handleCall = () => {
   }
   export{salveLocalCPF}
 
-  async function salveLocalTelefon(telefon){
-    await SecureStore.setItemAsync('appCbmTelefon',telefon)
-    console.log('Telefon salve')
+  async function salveLocalPhone(phone){
+    await SecureStore.setItemAsync('appCbmPhone', phone)
+    console.log('Phone salve')
   }
-  export{salveLocalTelefon}
+  export{salveLocalPhone}
 
-  async function salveLocalAdress(adress) {
-    await SecureStore.setItemAsync('appCbmAddress',adress)
-    console.log('Adress salve')
+  async function salveLocalStreet(text) {
+    await SecureStore.setItemAsync('appCbmStreet', text)
+    console.log('Street salve')
   }
-  export {salveLocalAdress}
+  export {salveLocalStreet}
+
+  async function salveLocalAddressNumber(text) {
+    await SecureStore.setItemAsync('appCbmAddressNumber', text)
+    console.log('AddressNumber salve')
+  }
+  export {salveLocalAddressNumber}
+
+  async function salveLocalComplementAddress(text) {
+    await SecureStore.setItemAsync('appCbmComplementAddress', text)
+    console.log('ComplementAddress salve')
+  }
+  export {salveLocalComplementAddress}
+
+  async function salveLocalDistrict(text) {
+    await SecureStore.setItemAsync('appCbmDistrict', text)
+    console.log('District salve')
+  }
+  export {salveLocalDistrict}
+
+  async function salveLocalCity(text) {
+    await SecureStore.setItemAsync('appCbmCity', text)
+    console.log('City salve')
+  }
+  export {salveLocalCity}
+
+  async function salveLocalState(text) {
+    await SecureStore.setItemAsync('appCbmState', text)
+    console.log('State salve')
+  }
+  export {salveLocalState}
+
+  async function salveLocalIbge(text) {
+    await SecureStore.setItemAsync('appCbmIbge', text)
+    console.log('Ibge salve')
+  }
+  export {salveLocalIbge}
+
+  async function salveLocalCEP(text) {
+    await SecureStore.setItemAsync('appCbmCEP', text)
+    console.log('CEP salve')
+  }
+  export {salveLocalCEP}
 
   /**
- * Essa função obrigatóriamente deve receber um array para salvar no SecureStore.
+ * Essa função obrigatoriamente deve receber um array para salvar no SecureStore.
  * @param {array} incident *Type: Array* - recebe um array que contém internamente
  * um segundo array com 5 itens (somente o valor) em ordem, sendo: 1º nome, 
  * 2º cpf, 3º tipo da emergência, 4º endereço da ocorrência e 5º descrição da ocorrência.
@@ -138,14 +180,13 @@ export const handleCall = () => {
 
   async function getLocalLogin() {
     const result1 = await SecureStore.getItemAsync('appCbmUser')
-    const result2 = await SecureStore.getItemAsync('appCbmPassword')
     const result3 = await SecureStore.getItemAsync('appCbmExpirationDate')
-    if(result1 && result2 && result3){
+    if(result1 && result3){
       console.log('Login get user, password and expiration date')
     } else{
       console.log('Error get Login')
     }
-    return [result1,result2, result3]
+    return [result1, result3]
   }
   export {getLocalLogin}
 
@@ -159,17 +200,6 @@ export const handleCall = () => {
     return result
   }
   export{getLocalUser}
-
-  async function getLocalPassword() {
-    const result = await SecureStore.getItemAsync('appCbmPassword')
-    if(result){
-      console.log('Password get')
-    } else{
-      console.log('Error get Password')
-    }
-    return result
-  }
-  export{getLocalPassword}
 
   async function getLocalExpirationDate(){
     const result = await SecureStore.getItemAsync('appCbmExpirationDate')
@@ -204,7 +234,7 @@ export const handleCall = () => {
   }
   export{getLocalCPF}
 
-  async function getLocalTelefon(){
+  async function getLocalPhone(){
     const result = await SecureStore.getItemAsync('appCbmTelefon')
     if(result){
       console.log('Telefon get')
@@ -213,7 +243,7 @@ export const handleCall = () => {
     }
     return result
   }
-  export{getLocalTelefon}
+  export{getLocalPhone}
 
   async function getLocalAdress() {
     const result = await SecureStore.getItemAsync('appCbmAddress')
@@ -249,7 +279,7 @@ async function getLocalIncident() {
 
 
 
-//Não iremos utilizar delet por hora
+//Não iremos utilizar delete por hora
   async function removeLogin(params) {
     await SecureStore.deleteItemAsync('appCbmUser')
     console.log('Apagado','Apagado o Login' )

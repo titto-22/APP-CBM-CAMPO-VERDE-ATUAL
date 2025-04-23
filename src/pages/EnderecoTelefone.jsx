@@ -13,7 +13,7 @@ import { AuthContext } from "../../App";
 import {
   rem,
   handleCall,
-  salveLocalUser,
+  salveLocalEmailUser,
   salveLocalPassword,
   salveLocalCPF,
   salveLocalAdress,
@@ -21,6 +21,16 @@ import {
   vh,
   vw,
   NewRem,
+  salveLocalPhone,
+  salveLocalStreet,
+  salveLocalAddressNumber,
+  salveLocalComplementAddress,
+  salveLocalDistrict,
+  salveLocalCity,
+  salveLocalState,
+  salveLocalCEP,
+  salveLocalIbge,
+  salveLocalExpirationDate,
 } from "../components/function";
 import { stylesRegistrarse } from "./Registrarse";
 import { stylesMain } from "./Login";
@@ -351,10 +361,10 @@ export default function EnderecoTelefone({ route, navigation }) {
     //MOnta o texto com ponto final
     textError=textError.substring(0,(textError.length-2))+'.'
 
-    //Após validar todos os dados preenchidos vai fazer requisição 
+    //Após validar todos os dados preenchidos vai fazer requisição para back-end
     // para o backend da criação do usuário 
     if(result){
-      conexaoFrontBack(
+      connectionFrontBack(
         dataUser.name,
         dataUser.cpf,
         userPhone,
@@ -382,7 +392,7 @@ export default function EnderecoTelefone({ route, navigation }) {
 
     // ---------------------  CONEXÃO BACKEND -------------------------------
 
-    function conexaoFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge, cep  ) {
+    function connectionFrontBack(name, cpf, telephone, email, password, street, number, complementAddress, district, city, state, ibge, cep  ) {
       const userData = {
         userName: name,
         cpf: onlyNumber(cpf),
@@ -419,37 +429,53 @@ export default function EnderecoTelefone({ route, navigation }) {
         }
         return response.json();
     })
-    .then((data) => {
-        console.log("Sucesso conexão: ", data, 'usuário criado');
-        // Faça algo com a resposta de sucesso do servidor, como redirecionar o usuário
-
+    .then((data) => {      
+      console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+      // Após a resposta de sucesso do servidor, redirecionar o usuário
+      afterConnection()
     })
     .catch((error) => {
+      console.error(Object.entries(error))
         console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
-        Alert.alert("Atenção",`${error.message}, vá para tela de login ou verifique os dados e tente novamente.`)
+        Alert.alert("Atenção",`${error.message}, volte para tela de login ou verifique os dados e tente novamente.`)
         
     })
     .finally(() => {
         console.log("final da conexão")
     });
 }
+
+  function afterConnection(){
+    //Grava localmente dados
+    gravaLocal()
+  }
   
     // ---------------------  TESTE CONEXÃO -------------------------------
 
-  /*
+  
 
-  function gravaLocal(){
-    let localCpf = cpf;
-      localCpf = localCpf.replace(/[^\d]+/g, "");
-      salveLocalName(userName);
-      salveLocalUser(userEmail.toLowerCase());
-      salveLocalPassword(userPassWord);
-      salveLocalCPF(localCpf);
+  function gravaLocal(){   
+      salveLocalName(dataUser.name);
+      salveLocalCPF(onlyNumber(dataUser.cpf));
+      salveLocalPhone(onlyNumber(userPhone));
+      salveLocalEmailUser(dataUser.userEmail.toLowerCase());
+      salveLocalStreet(userStreet);
+      salveLocalAddressNumber(userNumber);
+      salveLocalComplementAddress(userComplementAddress);
+      salveLocalDistrict(userDistrict);
+      salveLocalCity(userCity);
+      salveLocalState(userState);
+      salveLocalCEP(userCEP);
+      salveLocalIbge(ibge)
+      salveLocalExpirationDate(new Date().toISOString())
+      
+      navigation.navigate("Login")
+
       }
  
   // Função para validar o número de telefone
   
-  */
+  
   return (
     <KeyboardAvoidingView
       style={stylesRegistrarse.containerMain}

@@ -14,7 +14,7 @@ import { stylesMain } from "../pages/Login";
 import {
 	rem,
 	handleCall,
-	salveLocalUser,
+	salveLocalEmailUser,
 	salveLocalPassword,
 	salveLocalCPF,
 	salveLocalAdress,
@@ -51,7 +51,7 @@ export default function Registrarse({ navigation }) {
 	const [errorName, setErrorName] = useState(false);
 
 	//variáveis do Email
-	const [userEmail, setUserEmail] = useState("teste@teste.com");
+	const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
 	const [insightEmail, setInsightEmail] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
