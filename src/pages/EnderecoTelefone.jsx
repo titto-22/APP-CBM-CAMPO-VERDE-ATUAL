@@ -458,7 +458,7 @@ export default function EnderecoTelefone({ route, navigation }) {
       salveLocalName(dataUser.name);
       salveLocalCPF(onlyNumber(dataUser.cpf));
       salveLocalPhone(onlyNumber(userPhone));
-      salveLocalEmailUser(dataUser.userEmail.toLowerCase());
+      salveLocalEmailUser(dataUser.userEmail);
       salveLocalStreet(userStreet);
       salveLocalAddressNumber(userNumber);
       salveLocalComplementAddress(userComplementAddress);
