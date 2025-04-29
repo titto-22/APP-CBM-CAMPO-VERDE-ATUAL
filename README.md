@@ -7,13 +7,18 @@ Projeto de desenvolvimento de um aplicativo para emergências do corpo de bombei
 `React.Native`
 
 Criando arquitetura do projeto React.Native
-`npx create-expo-app MUDEAQUINOME --template blank`
+`npx create-expo-app MudeNomeAqui --template blank`
+
+Para executar o servidor que roda o projeto `npx expo start`
+
+Pode ocorrer de não conseguir conseguir conectar ao projeto por problemas com firewall ou isolamento de AP no roteador.
+Nesse caso pode usar `npx expo start -c --tunnel`
 
 ## Bibliotecas
 
 ### Biblioteca de Navegação
 
-[bibioteca de navegação](https://reactnavigation.org/)
+[biblioteca de navegação](https://reactnavigation.org/)
 
 `npm install @react-navigation/native`
 
@@ -60,7 +65,7 @@ Inicialmente é necessário instalar o `docker` e o `prisma`.
 //Instalação do prisma
 npm install @prisma/client
 //Esta instalação é sem typescript
-//Para typescrept -- npm install prisma typescript tsx @types/node --save-dev
+//Para typescript -- npm install prisma typescript tsx @types/node --save-dev
 npm install prisma -D
 npx prisma
 //Cria a pasta prisma no projeto
@@ -99,6 +104,6 @@ Após carregar teremos um banco de dados rodando, sendo necessário criar as tab
 
 Criar as tabelas na pasta `prisma/esquema.prisma` conforme [documentação.](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-prismaPostgres?utm_source=docs)
 
-```
+``` node
 npx prisma migrate dev --name init
 ```
