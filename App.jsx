@@ -32,29 +32,35 @@ const validationTokenLogin = 30;
 
 /**
  * Contexto de autenticação, sempre iniciando em *false*
+ * 
+ * Utilizado para controlar se usuário esta logado ou não
+ * 
+ * Responsável por permitir que outros componentes 
+ * modifiquem o estado local `isSignedIn`e modifiquem seu valor com `setIsSignedIn`
  */
 export const AuthContext = createContext({
 	isSignedIn: false,
-	setIsSignedIn: () => { },
+	setIsSignedIn: () => { },	
 });
 
 /**
  * Contexto Ip de conexão com o banco de dados
  */
-export const ipContext = createContext('192.168.0.109')
+export const ipContext = createContext('172.20.10.2')
 
 
 
 export default function App({ navigation }) {
 	///////////////////////////////////////////////////////////
-	/////    Variável que controla se esta logado ou não  /////
+	/////    Estado que controla se esta logado ou não  /////
 	///////////////////////////////////////////////////////////
 	const [isSignedIn, setIsSignedIn] = useState(false);
 
 	/**
 	 * **Function handleSetIsSignedIn**
 	 *
-	 * Função que atualiza o estado do login para ser usado como contexto nesta e em outras páginas
+	 * Função que é passada para os componentes através do contexto para manipular 
+	 * ou atualiza o estado do login nesta e em outras páginas
 	 * @param {boolean} value valor que sera setado para `IsSignedIn`
 	 */
 	const handleSetIsSignedIn = (value) => setIsSignedIn(value);
@@ -123,7 +129,7 @@ export default function App({ navigation }) {
 
 			<NavigationContainer>
 				<Drawer.Navigator
-					initialRouteName='Registrar-se'
+					initialRouteName='Login'
 					screenOptions={styles.styleTitlePagesColorRedBgWhite}
 					drawerContent={(props) => (
 						<DrawerContentScrollView {...props}>

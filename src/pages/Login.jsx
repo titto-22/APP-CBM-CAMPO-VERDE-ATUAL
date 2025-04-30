@@ -24,6 +24,7 @@ import {
 	getLocalPassword,
 	salveLocalExpirationDate,
 } from "../components/function";
+import InputComplex from "../components/inputComplex";
 
 export default function Login({ navigation }) {
 	const { setIsSignedIn } = useContext(AuthContext);
@@ -31,10 +32,27 @@ export default function Login({ navigation }) {
 		setIsSignedIn(true);
 	};
 
+	//Para facilitar navegação
+	const [isFocused, setIsFocused] = useState(false);
+	const firstInputRef = useRef(null);
+	const secondInputRef = useRef(null);
+	const thirdInputRef = useRef(null);
+
+		//variáveis do Email
+		const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
+		const [insightEmail, setInsightEmail] = useState(false);
+		const [errorEmail, setErrorEmail] = useState(false);
+	
+		//Variáveis da senha
+		const [userPassword, setUserPassword] = useState("96135151Ab!");
+		const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
+		const [insightPassword, setInsightPassword] = useState(false);
+		const [errorPassword, setErrorPassword] = useState(false);
+
+
 	const emailRef = useRef("");
 	const passwordRef = useRef(null);
 	const [errorLogin, setErrorLogin] = useState(false);
-	const [hiddenPassword, setHiddenPassword] = useState(true);
 
 	async function verificaLogin() {
 		const user = await getLocalUser();
@@ -70,24 +88,25 @@ export default function Login({ navigation }) {
 					<Text style={stylesMain.textMain}>193</Text>
 				</View>
 				<Text style={stylesMain.textBase}>Efetue seu Login</Text>
-				<View style={stylesMain.flexRow}>
-					<TouchableOpacity
-						onPress={() => {}}
-						style={stylesMain.buttonSemiRounded}
-					>
-						<View style={stylesMain.containerIcon}>
-							<IconFacebook width={rem(2.6)} height={rem(2.5)} />
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => {}}
-						style={stylesMain.buttonSemiRounded}
-					>
-						<View style={stylesMain.containerIcon}>
-							<IconGoogle width={rem(2.25)} height={rem(2.25)} />
-						</View>
-					</TouchableOpacity>
-				</View>
+					{/*
+					<View style={stylesMain.flexRow}>
+						<TouchableOpacity
+							onPress={() => {}}
+							style={stylesMain.buttonSemiRounded}
+						>
+							<View style={stylesMain.containerIcon}>
+								<IconFacebook width={rem(2.6)} height={rem(2.5)} />
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => {}}
+							style={stylesMain.buttonSemiRounded}
+						>
+							<View style={stylesMain.containerIcon}>
+								<IconGoogle width={rem(2.25)} height={rem(2.25)} />
+							</View>
+						</TouchableOpacity>
+					</View>
 				<View style={stylesMain.with80}>
 					<View style={[stylesMain.containerTextTopInput]}>
 						<Text style={stylesMain.textTopInput}>E-mail:</Text>
@@ -151,6 +170,41 @@ export default function Login({ navigation }) {
 						Usuário ou senha incorretos, verifique o e-mail e senha.
 					</Text>
 				</View>
+				 */}
+				<InputComplex
+					title="E-mail"
+					placeholder="Insira seu e-mail."
+					insightText="E-mail deve ser no formato: exemplo@exemplo.com"
+					firstRef={firstInputRef}
+					secondRef={secondInputRef}
+					maxLengthInput={100}
+					valueState={userEmail}
+					setValueStateOrFunctionMask={setUserEmail}
+					insightState={insightEmail}
+					setInsightState={setInsightEmail}
+					errorState={errorEmail}
+					setErrorState={setErrorEmail}
+					setFocused={setIsFocused}
+					keyboard="email-address"
+				/>
+				<InputHidden
+					title="Senha"
+					placeholder="Insira sua senha."
+					insightText="Senha deve ter pelo menos menos um número, uma letra maiúscula, uma minúscula, um carácter especial e pelo menos 8 dígitos."
+					firstRef={secondInputRef}
+					secondRef={thirdInputRef}
+					maxLengthInput={50}
+					valueState={userPassword}
+					setValueStateOrFunctionMask={setUserPassword}
+					insightState={insightPassword}
+					setInsightState={setInsightPassword}
+					errorState={errorPassword}
+					setErrorState={setErrorPassword}
+					functionValidate={validateUserPassword}
+					setFocused={setIsFocused}
+					hiddenState={hiddenPassword}
+					setHiddenState={setHiddenPassword}
+				/>
 				<TouchableOpacity
 					onPress={() => {
 						verificaLogin();
@@ -162,7 +216,11 @@ export default function Login({ navigation }) {
 						stylesMain.with80,
 					]}
 				>
-					<Text style={stylesMain.textoButtonWith}>Acessar</Text>
+					<Text 
+					style={stylesMain.textoButtonWith}
+					ref={thirdInputRef}
+					>
+						Acessar</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => {

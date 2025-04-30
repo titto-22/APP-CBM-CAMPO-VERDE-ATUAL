@@ -44,6 +44,9 @@ export default function EnderecoTelefone({ route, navigation }) {
   //ip de conexão com o banco de dados
   const { ip } = useContext(AuthContext)
 
+  //Responsável por realizar o login
+  const { setIsSignedIn } = useContext(AuthContext);
+
   //Controla verificação do CEP correto
   const [isValidateCep, setIsValidateCEP] = useState(false)
 
@@ -433,6 +436,16 @@ export default function EnderecoTelefone({ route, navigation }) {
       console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
       // Após a resposta de sucesso do servidor, redirecionar o usuário
       afterConnection()
+      Alert.alert("Sucesso", "Usuário criado com sucesso.",[
+              {
+          text:"OK", onPress: ()=>{
+            console.log("Logado com sucesso: OK")
+            setIsSignedIn(true);
+          }
+        },
+      ],
+      { cancelable: false }
+    )
     })
     .catch((error) => {
       console.error(Object.entries(error))
@@ -450,10 +463,6 @@ export default function EnderecoTelefone({ route, navigation }) {
     gravaLocal()
   }
   
-    // ---------------------  TESTE CONEXÃO -------------------------------
-
-  
-
   function gravaLocal(){   
       salveLocalName(dataUser.name);
       salveLocalCPF(onlyNumber(dataUser.cpf));
@@ -472,8 +481,6 @@ export default function EnderecoTelefone({ route, navigation }) {
       navigation.navigate("Login")
 
       }
- 
-  // Função para validar o número de telefone
   
   
   return (
