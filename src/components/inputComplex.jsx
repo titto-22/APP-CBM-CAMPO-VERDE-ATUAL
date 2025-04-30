@@ -24,67 +24,79 @@ export default function InputComplex({
     keyboard, 
     disableInput 
   }) {
+    function insertInputOrText(){
+      console.log(disableInput)
+      if(disableInput===true){
+        return (
+          <View style={[
+            stylesMain.input, 
+            stylesMain.withFull, 
+            insightState ? '' : stylesRegistrarse.marginBottom8,
+            {zIndex: -1, justifyContent:'center'},
+          ]}>
+            <Text 
+              style={[stylesRegistrarse.alignItemsCenter, stylesMain.textTopInput ]}
+              ref={firstRef}
+            >
+              {valueState}
+            </Text>          
+          </View>
+        )
+      // biome-ignore lint/style/noUselessElse: <explanation>
+      } else{
+        console.log("entrou no else com: ", disableInput)
+        return (
+          <TextInput 
+            style={[
+              stylesMain.input, 
+              {width:'99%'}, 
+              insightState ? '' : stylesRegistrarse.marginBottom8,
+              {zIndex: -1, fontSize:16},
+            ]}
+            onFocus={() => {
+              setFocused(true)
+              if (actionScroll) {
+                actionScroll(); // Chama a função actionScroll se ela existir
+              }
+            }}
+            onBlur={() => {
+              setFocused(false);
+              //Valida se foi passado uma função de validação
+              //Caso sim executa
+              if(functionValidate){
+                if (!functionValidate(valueState)) {
+                  setInsightState(true)
+                } else {
+                  setInsightState(false)
+                  setErrorState(false)
+                }
+              }
+
+            }}
+            returnKeyType="next" //define botão no teclado de próximo
+            ref={firstRef} //define a referencia
+            onSubmitEditing={() => {
+              secondRef.current.focus(); // Move o foco para o segundo input
+            }}
+            onChangeText={(text) => {
+              setValueStateOrFunctionMask(text);
+            }}
+            value={valueState}
+            placeholder={placeholder}
+            {...(maxLengthInput ? { maxLength: maxLengthInput } : {})}
+            {...(keyboard ? { keyboardType: keyboard } : {})}
+          />
+        )
+      }
+    }
   return (
     <View style={{ width: '100%' }}>
       <View style={[{width:'100%', backgroundColor:'transparent', transform:[{translateY:vh(1)}], marginLeft:8, alignItems:'flex-start', },]}>
         <Text style={[stylesMain.textTopInput, {backgroundColor:"#fff", zIndex: 999,}]}> {title}: </Text>
       </View>
-      {disableInput ? (
-        <View style={[
-          stylesMain.input, 
-          stylesMain.withFull, 
-          insightState ? '' : stylesRegistrarse.marginBottom8,
-          {zIndex: -1, justifyContent:'center'},
-        ]}>
-          <Text 
-            style={[stylesRegistrarse.alignItemsCenter, stylesMain.textTopInput ]}
-            ref={firstRef}
-          >
-            {valueState}
-          </Text>          
-        </View>
-      ):(
-        <TextInput 
-        style={[
-          stylesMain.input, 
-          {width:'99%'}, 
-          insightState ? '' : stylesRegistrarse.marginBottom8,
-          {zIndex: -1, fontSize:16},
-        ]}
-        onFocus={() => {
-          setFocused(true)
-          if (actionScroll) {
-            actionScroll(); // Chama a função actionScroll se ela existir
-          }
-        }}
-        onBlur={() => {
-          setFocused(false);
-          //Valida se foi passado uma função de validação
-          //Caso sim executa
-          if(functionValidate){
-            if (!functionValidate(valueState)) {
-              setInsightState(true)
-            } else {
-              setInsightState(false)
-              setErrorState(false)
-            }
-          }
-
-        }}
-        returnKeyType="next" //define botão no teclado de próximo
-        ref={firstRef} //define a referencia
-        onSubmitEditing={() => {
-          secondRef.current.focus(); // Move o foco para o segundo input
-        }}
-        onChangeText={(text) => {
-          setValueStateOrFunctionMask(text);
-        }}
-        value={valueState}
-        placeholder={placeholder}
-        {...(maxLengthInput ? { maxLength: maxLengthInput } : {})}
-        {...(keyboard ? { keyboardType: keyboard } : {})}
-      />
-      )}
+      {     
+          insertInputOrText()
+        }
       <Text //insight 
         style={[
           { display: insightState ? "flex" : "none" },

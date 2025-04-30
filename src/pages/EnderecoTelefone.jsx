@@ -122,13 +122,13 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   //função para ter apenas numero
   const onlyNumber = (text) => {
-    let result = text.replace(/\D/g, '');
+    const result = text.replace(/\D/g, '');
     return result
   }
 
   // Função para aplicar a máscara manualmente no phone 
   const applyMaskPhone = (text) => {
-    let textLocal = onlyNumber(text)
+    const textLocal = onlyNumber(text)
     let formatted = "";
     if (textLocal.length > 10) {
       formatted = `(${textLocal.substring(0, 2)}) ${textLocal.substring(2, 3)}.${textLocal.substring(3, 7)}-${textLocal.substring(7, 11)}`;
@@ -146,7 +146,7 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   //Função para aplicar a máscara manualmente no CEP 
   const applyMaskCEP = (text) => {
-    let textLocal = onlyNumber(text)
+    const textLocal = onlyNumber(text)
     let formatted = "";
     if (textLocal.length > 5) {
       formatted = `${textLocal.substring(0, 5)}-${textLocal.substring(5, 8)}`;
@@ -170,8 +170,8 @@ export default function EnderecoTelefone({ route, navigation }) {
  * @returns void 
  * */ 
   const  apiCEP = (cep) =>{
-    let clearCEP = onlyNumber(cep)
-      if(clearCEP.length==8){
+    const clearCEP = onlyNumber(cep)
+      if(clearCEP.length===8){
         fetch(`https://viacep.com.br/ws/${onlyNumber(clearCEP)}/json/`, {
           method: "GET",
           headers: {
@@ -361,8 +361,8 @@ export default function EnderecoTelefone({ route, navigation }) {
       error=true
       textError+='CPF, '
     }
-    //MOnta o texto com ponto final
-    textError=textError.substring(0,(textError.length-2))+'.'
+    //Monta o texto com ponto final
+    textError=`${textError.substring(0,(textError.length-2))}.`
 
     //Após validar todos os dados preenchidos vai fazer requisição para back-end
     // para o backend da criação do usuário 

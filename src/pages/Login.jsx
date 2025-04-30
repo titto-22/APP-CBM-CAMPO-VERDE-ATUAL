@@ -25,6 +25,7 @@ import {
 	salveLocalExpirationDate,
 } from "../components/function";
 import InputComplex from "../components/inputComplex";
+import InputHidden from "../components/inputHidden";
 
 export default function Login({ navigation }) {
 	const { setIsSignedIn } = useContext(AuthContext);
@@ -38,16 +39,16 @@ export default function Login({ navigation }) {
 	const secondInputRef = useRef(null);
 	const thirdInputRef = useRef(null);
 
-		//variáveis do Email
-		const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
-		const [insightEmail, setInsightEmail] = useState(false);
-		const [errorEmail, setErrorEmail] = useState(false);
-	
-		//Variáveis da senha
-		const [userPassword, setUserPassword] = useState("96135151Ab!");
-		const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
-		const [insightPassword, setInsightPassword] = useState(false);
-		const [errorPassword, setErrorPassword] = useState(false);
+	//variáveis do Email
+	const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
+	const [insightEmail, setInsightEmail] = useState(false);
+	const [errorEmail, setErrorEmail] = useState(false);
+
+	//Variáveis da senha
+	const [userPassword, setUserPassword] = useState("96135151Ab!");
+	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
+	const [insightPassword, setInsightPassword] = useState(false);
+	const [errorPassword, setErrorPassword] = useState(false);
 
 
 	const emailRef = useRef("");
@@ -174,7 +175,7 @@ export default function Login({ navigation }) {
 				<InputComplex
 					title="E-mail"
 					placeholder="Insira seu e-mail."
-					insightText="E-mail deve ser no formato: exemplo@exemplo.com"
+					insightText=""
 					firstRef={firstInputRef}
 					secondRef={secondInputRef}
 					maxLengthInput={100}
@@ -190,7 +191,7 @@ export default function Login({ navigation }) {
 				<InputHidden
 					title="Senha"
 					placeholder="Insira sua senha."
-					insightText="Senha deve ter pelo menos menos um número, uma letra maiúscula, uma minúscula, um carácter especial e pelo menos 8 dígitos."
+					insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
 					firstRef={secondInputRef}
 					secondRef={thirdInputRef}
 					maxLengthInput={50}
@@ -200,7 +201,6 @@ export default function Login({ navigation }) {
 					setInsightState={setInsightPassword}
 					errorState={errorPassword}
 					setErrorState={setErrorPassword}
-					functionValidate={validateUserPassword}
 					setFocused={setIsFocused}
 					hiddenState={hiddenPassword}
 					setHiddenState={setHiddenPassword}
@@ -341,7 +341,7 @@ export const stylesMain = StyleSheet.create({
 		borderRadius: 4,
 		padding: NewRem(0.2),
 		fontSize: NewRem(0.35),
-		height:45
+		height:45,
 	},
 	textoButtonWith: {
 		fontSize: rem(1),
