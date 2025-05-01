@@ -7,6 +7,7 @@ import {
 	TextInput,
 	Platform,
 	ScrollView,
+	KeyboardAvoidingView,
 } from "react-native";
 import { rem, handleCall, NewRem } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
@@ -26,6 +27,7 @@ import {
 } from "../components/function";
 import InputComplex from "../components/inputComplex";
 import InputHidden from "../components/inputHidden";
+import { stylesRegistrarse } from "./Registrarse";
 
 export default function Login({ navigation }) {
 	const { setIsSignedIn } = useContext(AuthContext);
@@ -34,6 +36,7 @@ export default function Login({ navigation }) {
 	};
 
 	//Para facilitar navegação
+	const scrollRef = useRef(null);
 	const [isFocused, setIsFocused] = useState(false);
 	const firstInputRef = useRef(null);
 	const secondInputRef = useRef(null);
@@ -79,16 +82,21 @@ export default function Login({ navigation }) {
 		}
 	}, []);
 
-	
+
 
 	return (
-		<View style={stylesMain.containerMain}>
-				<View style={[stylesMain.flexRow]}>
+	
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={[stylesMain.containerMain, {gap:1, alignItems: "center", flex:1, paddingHorizontal:'10%'}]}
+				keyboardShouldPersistTaps="handled"
+				ref={scrollRef}
+			>
+				<View style={[stylesMain.flexRow, {height:"20%"}]}>
 					<CbmLogo width={rem(4)} height={rem(4)} />
 					<Text style={stylesMain.textMain}>Emergências</Text>
 					<Text style={stylesMain.textMain}>193</Text>
 				</View>
-				<Text style={stylesMain.textBase}>Efetue seu Login</Text>
 					{/*
 					<View style={stylesMain.flexRow}>
 						<TouchableOpacity
@@ -172,77 +180,86 @@ export default function Login({ navigation }) {
 					</Text>
 				</View>
 				 */}
-				<InputComplex
-					title="E-mail"
-					placeholder="Insira seu e-mail."
-					insightText=""
-					firstRef={firstInputRef}
-					secondRef={secondInputRef}
-					maxLengthInput={100}
-					valueState={userEmail}
-					setValueStateOrFunctionMask={setUserEmail}
-					insightState={insightEmail}
-					setInsightState={setInsightEmail}
-					errorState={errorEmail}
-					setErrorState={setErrorEmail}
-					setFocused={setIsFocused}
-					keyboard="email-address"
-				/>
-				<InputHidden
-					title="Senha"
-					placeholder="Insira sua senha."
-					insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
-					firstRef={secondInputRef}
-					secondRef={thirdInputRef}
-					maxLengthInput={50}
-					valueState={userPassword}
-					setValueStateOrFunctionMask={setUserPassword}
-					insightState={insightPassword}
-					setInsightState={setInsightPassword}
-					errorState={errorPassword}
-					setErrorState={setErrorPassword}
-					setFocused={setIsFocused}
-					hiddenState={hiddenPassword}
-					setHiddenState={setHiddenPassword}
-				/>
-				<TouchableOpacity
-					onPress={() => {
-						verificaLogin();
-					}}
-					style={[
-						stylesMain.buttonSemiRounded,
-						stylesMain.backgroundRed,
-						stylesMain.withFull,
-						stylesMain.with80,
-					]}
-				>
-					<Text 
-					style={stylesMain.textoButtonWith}
-					ref={thirdInputRef}
+				<View style={[{height:"50%", width:'100%', alignItems:'center', justifyContent:'center', gap:10 }]}>
+					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
+					<InputComplex
+						title="E-mail"
+						placeholder="Insira seu e-mail."
+						insightText=""
+						firstRef={firstInputRef}
+						secondRef={secondInputRef}
+						maxLengthInput={100}
+						valueState={userEmail}
+						setValueStateOrFunctionMask={setUserEmail}
+						insightState={insightEmail}
+						setInsightState={setInsightEmail}
+						errorState={errorEmail}
+						setErrorState={setErrorEmail}
+						setFocused={setIsFocused}
+						keyboard="email-address"
+					/>
+					<InputHidden
+						title="Senha"
+						placeholder="Insira sua senha."
+						insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
+						firstRef={secondInputRef}
+						secondRef={thirdInputRef}
+						maxLengthInput={50}
+						valueState={userPassword}
+						setValueStateOrFunctionMask={setUserPassword}
+						insightState={insightPassword}
+						setInsightState={setInsightPassword}
+						errorState={errorPassword}
+						setErrorState={setErrorPassword}
+						setFocused={setIsFocused}
+						hiddenState={hiddenPassword}
+						setHiddenState={setHiddenPassword}
+					/>
+					<TouchableOpacity
+						onPress={() => {
+							verificaLogin();
+						}}
+						style={[
+							stylesMain.buttonSemiRounded,
+							stylesMain.backgroundRed,
+							stylesMain.with80,
+						]}
 					>
-						Acessar</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => {
-						getLocalUser();
-					}}
-				>
-					<Text style={[stylesMain.textTopInput]}>Esqueceu a senha?</Text>
-				</TouchableOpacity>
-				<Text style={[stylesMain.textTopInput]}>ou</Text>
-				<TouchableOpacity
-					accessibilityLabel="Ir para a tela de registro"
-					onPress={() => {
-						navigation.navigate("Registrar-se");
-					}}
-				>
-					<Text style={[stylesMain.textRed]}>Registrar-se</Text>
-				</TouchableOpacity>
-				<TouchableOpacity onPress={handleCall} style={stylesMain.buttonCall}>
-					<IconCall width={rem(2.25)} height={rem(2.25)} />
+						<Text
+							style={stylesMain.textoButtonWith}
+							ref={thirdInputRef}
+						>
+							Acessar</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={[{width:'100%', height:"20%", justifyContent:'center',gap: 5, alignItem:'center'}]}>
+					<TouchableOpacity
+						onPress={() => {
+							getLocalUser();
+						}}
+					>
+						<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
+					</TouchableOpacity>
+					<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>
+					<TouchableOpacity
+						accessibilityLabel="Ir para a tela de registro"
+						onPress={() => {
+							navigation.navigate("Registrar-se");
+						}}
+					>
+						<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={[{height:'10%', justifyContent:'center', alignItems:'center',}]}>
+				<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
+					<IconCall width={rem(1.5)} height={rem(1.5)} />
 					<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
 				</TouchableOpacity>
-		</View>
+				</View>
+				<View style={[{display:isFocused?"flex":"none", marginBottom:'25%'}]}><Text> </Text></View>
+
+			</ScrollView>
+		
 	);
 }
 
@@ -269,7 +286,7 @@ export const stylesMain = StyleSheet.create({
 	},
 	flexRow: {
 		width: "100%",
-		height: rem(5),
+		height: '30%',
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-around",
@@ -341,7 +358,7 @@ export const stylesMain = StyleSheet.create({
 		borderRadius: 4,
 		padding: NewRem(0.2),
 		fontSize: NewRem(0.35),
-		height:45,
+		height: 45,
 	},
 	textoButtonWith: {
 		fontSize: rem(1),

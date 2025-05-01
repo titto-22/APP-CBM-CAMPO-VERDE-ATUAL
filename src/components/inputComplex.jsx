@@ -30,7 +30,7 @@ export default function InputComplex({
         return (
           <View style={[
             stylesMain.input, 
-            stylesMain.withFull, 
+            {width:'99%'},  
             insightState ? '' : stylesRegistrarse.marginBottom8,
             {zIndex: -1, justifyContent:'center'},
           ]}>
@@ -85,7 +85,7 @@ export default function InputComplex({
             placeholder={placeholder}
             {...(maxLengthInput ? { maxLength: maxLengthInput } : {})}
             {...(keyboard ? { keyboardType: keyboard } : {})}
-          />
+          /> 
         )
       }
     }
