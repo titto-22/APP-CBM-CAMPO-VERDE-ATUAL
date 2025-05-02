@@ -8,6 +8,7 @@ import {
 	Platform,
 	ScrollView,
 	KeyboardAvoidingView,
+	Alert,
 } from "react-native";
 import { rem, handleCall, NewRem } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
@@ -30,9 +31,12 @@ import InputHidden from "../components/inputHidden";
 import { stylesRegistrarse } from "./Registrarse";
 
 export default function Login({ navigation }) {
-	const { setIsSignedIn } = useContext(AuthContext);
+
+	const { ip } = useContext(AuthContext)
+
+	const { setIsSignedIn, isSignedIn } = useContext(AuthContext);
 	const handleLogin = () => {
-		setIsSignedIn(true);
+		setIsSignedIn(!isSignedIn);
 	};
 
 	//Para facilitar navegação
@@ -53,12 +57,55 @@ export default function Login({ navigation }) {
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 
-
-	const emailRef = useRef("");
-	const passwordRef = useRef(null);
-	const [errorLogin, setErrorLogin] = useState(false);
-
 	async function verificaLogin() {
+		const data={
+			email:userEmail,
+			password:userPassword
+		}
+
+		fetch(`http://${ip}:3333/login-user`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(data),
+					})
+					.then((response) => {
+						if (!response.ok) {
+							//console.log(response)
+								return response.json().then(err => { // Tenta ler o corpo JSON de erro
+										err.status=response.status
+										throw err; // Rejoga o erro com o corpo JSON
+								});
+						}
+						return response.json();
+				})
+				.then((data) => {      
+					console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+					// Após a resposta de sucesso do servidor, redirecionar o usuário				
+					Alert.alert("Sucesso", "Usuário criado com sucesso.",[
+									{
+							text:"OK", onPress: ()=>{
+								console.log("Logado com sucesso: OK")
+								setIsSignedIn(true);
+							}
+						},
+					],
+					{ cancelable: false }
+				)
+				})
+				.catch((error) => {
+					console.error(Object.entries(error))
+					console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
+					setInsightPassword(true)
+					setErrorPassword(true)
+				})
+				.finally(() => {
+						console.log("final da conexão")
+				});
+
+
+		/*
 		const user = await getLocalUser();
 		const password = await getLocalPassword();
 
@@ -72,8 +119,10 @@ export default function Login({ navigation }) {
 		} else {
 			setErrorLogin(true);
 		}
+			*/
 	}
 
+	/*
 	useEffect(() => {
 		if (emailRef.current) {
 			setTimeout(() => {
@@ -81,18 +130,22 @@ export default function Login({ navigation }) {
 			}, 5000); // Adiciona um atraso de 100 milissegundos
 		}
 	}, []);
-
+*/
 
 
 	return (
-	
+		<KeyboardAvoidingView
+		style={stylesRegistrarse.containerMain}
+		behavior={Platform.OS === "ios" ? "padding" : "height"}
+		keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
+	>
 			<ScrollView
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[stylesMain.containerMain, {gap:1, alignItems: "center", flex:1, paddingHorizontal:'10%'}]}
+				contentContainerStyle={[stylesMain.containerMain, {gap:10, alignItems: "center", flex:1, paddingHorizontal:'10%'}]}
 				keyboardShouldPersistTaps="handled"
 				ref={scrollRef}
 			>
-				<View style={[stylesMain.flexRow, {height:"20%"}]}>
+				<View style={[stylesMain.flexRow, {height:"15%"}]}>
 					<CbmLogo width={rem(4)} height={rem(4)} />
 					<Text style={stylesMain.textMain}>Emergências</Text>
 					<Text style={stylesMain.textMain}>193</Text>
@@ -180,7 +233,7 @@ export default function Login({ navigation }) {
 					</Text>
 				</View>
 				 */}
-				<View style={[{height:"50%", width:'100%', alignItems:'center', justifyContent:'center', gap:10 }]}>
+				<View style={[{height:"50%", width:'100%', alignItems:'center', justifyContent:'center', }]}>
 					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
 					<InputComplex
 						title="E-mail"
@@ -259,6 +312,7 @@ export default function Login({ navigation }) {
 				<View style={[{display:isFocused?"flex":"none", marginBottom:'25%'}]}><Text> </Text></View>
 
 			</ScrollView>
+			</KeyboardAvoidingView>
 		
 	);
 }

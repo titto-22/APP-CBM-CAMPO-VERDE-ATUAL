@@ -25,7 +25,6 @@ export default function InputComplex({
     disableInput 
   }) {
     function insertInputOrText(){
-      console.log(disableInput)
       if(disableInput===true){
         return (
           <View style={[
@@ -44,7 +43,6 @@ export default function InputComplex({
         )
       // biome-ignore lint/style/noUselessElse: <explanation>
       } else{
-        console.log("entrou no else com: ", disableInput)
         return (
           <TextInput 
             style={[
