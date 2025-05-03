@@ -15,15 +15,12 @@ import CbmLogo from "../assets/LogoCBM.svg";
 import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
 import IconCall from "../assets/call.svg";
-import EyeOf from "../assets/eye-slash.svg";
-import EyeOn from "../assets/eye.svg";
 
 import React, { useContext } from "../../node_modules/react";
 import { AuthContext } from "../../App";
 
 import {
 	getLocalUser,
-	getLocalPassword,
 	salveLocalExpirationDate,
 } from "../components/function";
 import InputComplex from "../components/inputComplex";
@@ -35,10 +32,7 @@ export default function Login({ navigation }) {
 	const { ip } = useContext(AuthContext)
 
 	const { setIsSignedIn, isSignedIn } = useContext(AuthContext);
-	const handleLogin = () => {
-		setIsSignedIn(!isSignedIn);
-	};
-
+	
 	//Para facilitar navegação
 	const scrollRef = useRef(null);
 	const [isFocused, setIsFocused] = useState(false);
@@ -47,17 +41,17 @@ export default function Login({ navigation }) {
 	const thirdInputRef = useRef(null);
 
 	//variáveis do Email
-	const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
+	const [userEmail, setUserEmail] = useState("");
 	const [insightEmail, setInsightEmail] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
 	//Variáveis da senha
-	const [userPassword, setUserPassword] = useState("96135151Ab!");
+	const [userPassword, setUserPassword] = useState("");
 	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 
-	async function verificaLogin() {
+	async function checkLogin() {
 		const data = {
 			email: userEmail,
 			password: userPassword
@@ -75,7 +69,7 @@ export default function Login({ navigation }) {
 					//console.log(response)
 					return response.json().then(err => { // Tenta ler o corpo JSON de erro
 						err.status = response.status
-						throw err; // Rejoga o erro com o corpo JSON
+						throw err; // Retorna o erro com o corpo JSON
 					});
 				}
 				return response.json();
@@ -91,8 +85,6 @@ export default function Login({ navigation }) {
 				setInsightPassword(true)
 				setErrorPassword(true)
 			})
-
-
 		/*
 		const user = await getLocalUser();
 		const password = await getLocalPassword();
@@ -258,7 +250,7 @@ export default function Login({ navigation }) {
 					/>
 					<TouchableOpacity
 						onPress={() => {
-							verificaLogin();
+							checkLogin();
 						}}
 						style={[
 							stylesMain.buttonSemiRounded,
@@ -270,7 +262,8 @@ export default function Login({ navigation }) {
 							style={stylesMain.textoButtonWith}
 							ref={thirdInputRef}
 						>
-							Acessar</Text>
+							Acessar
+						</Text>
 					</TouchableOpacity>
 				</View>
 				<View style={[{ width: '100%', height: "20%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
