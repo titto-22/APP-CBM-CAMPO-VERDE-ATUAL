@@ -58,51 +58,39 @@ export default function Login({ navigation }) {
 	const [errorPassword, setErrorPassword] = useState(false);
 
 	async function verificaLogin() {
-		const data={
-			email:userEmail,
-			password:userPassword
+		const data = {
+			email: userEmail,
+			password: userPassword
 		}
 
 		fetch(`http://${ip}:3333/login-user`, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(data),
-					})
-					.then((response) => {
-						if (!response.ok) {
-							//console.log(response)
-								return response.json().then(err => { // Tenta ler o corpo JSON de erro
-										err.status=response.status
-										throw err; // Rejoga o erro com o corpo JSON
-								});
-						}
-						return response.json();
-				})
-				.then((data) => {      
-					console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
-					// Após a resposta de sucesso do servidor, redirecionar o usuário				
-					Alert.alert("Sucesso", "Usuário criado com sucesso.",[
-									{
-							text:"OK", onPress: ()=>{
-								console.log("Logado com sucesso: OK")
-								setIsSignedIn(true);
-							}
-						},
-					],
-					{ cancelable: false }
-				)
-				})
-				.catch((error) => {
-					console.error(Object.entries(error))
-					console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
-					setInsightPassword(true)
-					setErrorPassword(true)
-				})
-				.finally(() => {
-						console.log("final da conexão")
-				});
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					//console.log(response)
+					return response.json().then(err => { // Tenta ler o corpo JSON de erro
+						err.status = response.status
+						throw err; // Rejoga o erro com o corpo JSON
+					});
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+				// Após a resposta de sucesso do servidor, redirecionar o usuário		
+				setIsSignedIn(true);
+			})
+			.catch((error) => {
+				console.error(Object.entries(error))
+				console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
+				setInsightPassword(true)
+				setErrorPassword(true)
+			})
 
 
 		/*
@@ -135,22 +123,22 @@ export default function Login({ navigation }) {
 
 	return (
 		<KeyboardAvoidingView
-		style={stylesRegistrarse.containerMain}
-		behavior={Platform.OS === "ios" ? "padding" : "height"}
-		keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
-	>
+			style={stylesRegistrarse.containerMain}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
+		>
 			<ScrollView
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[stylesMain.containerMain, {gap:10, alignItems: "center", flex:1, paddingHorizontal:'10%'}]}
+				contentContainerStyle={[stylesMain.containerMain, { gap: 10, alignItems: "center", flex: 1, paddingHorizontal: '10%' }]}
 				keyboardShouldPersistTaps="handled"
 				ref={scrollRef}
 			>
-				<View style={[stylesMain.flexRow, {height:"15%"}]}>
+				<View style={[stylesMain.flexRow, { height: "15%" }]}>
 					<CbmLogo width={rem(4)} height={rem(4)} />
 					<Text style={stylesMain.textMain}>Emergências</Text>
 					<Text style={stylesMain.textMain}>193</Text>
 				</View>
-					{/*
+				{/*
 					<View style={stylesMain.flexRow}>
 						<TouchableOpacity
 							onPress={() => {}}
@@ -233,7 +221,7 @@ export default function Login({ navigation }) {
 					</Text>
 				</View>
 				 */}
-				<View style={[{height:"50%", width:'100%', alignItems:'center', justifyContent:'center', }]}>
+				<View style={[{ height: "50%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
 					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
 					<InputComplex
 						title="E-mail"
@@ -285,7 +273,7 @@ export default function Login({ navigation }) {
 							Acessar</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={[{width:'100%', height:"20%", justifyContent:'center',gap: 5, alignItem:'center'}]}>
+				<View style={[{ width: '100%', height: "20%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
 					<TouchableOpacity
 						onPress={() => {
 							getLocalUser();
@@ -303,17 +291,17 @@ export default function Login({ navigation }) {
 						<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={[{height:'10%', justifyContent:'center', alignItems:'center',}]}>
-				<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
-					<IconCall width={rem(1.5)} height={rem(1.5)} />
-					<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
-				</TouchableOpacity>
+				<View style={[{ height: '10%', justifyContent: 'center', alignItems: 'center', }]}>
+					<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
+						<IconCall width={rem(1.5)} height={rem(1.5)} />
+						<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
+					</TouchableOpacity>
 				</View>
-				<View style={[{display:isFocused?"flex":"none", marginBottom:'25%'}]}><Text> </Text></View>
+				<View style={[{ display: isFocused ? "flex" : "none", marginBottom: '25%' }]}><Text> </Text></View>
 
 			</ScrollView>
-			</KeyboardAvoidingView>
-		
+		</KeyboardAvoidingView>
+
 	);
 }
 
