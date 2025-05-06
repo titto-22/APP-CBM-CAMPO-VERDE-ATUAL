@@ -115,7 +115,9 @@ export default function Login({ navigation }) {
 
 	return (
 		<KeyboardAvoidingView
-			style={stylesRegistrarse.containerMain}
+			style={{flex: 1,
+				alignItems: "center",
+				backgroundColor: "#fff",}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
 		>
