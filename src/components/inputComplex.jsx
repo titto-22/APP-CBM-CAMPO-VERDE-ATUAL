@@ -40,7 +40,7 @@ export default function InputComplex({
               {valueState}
             </Text>          
           </View>
-        )
+        )  
       // biome-ignore lint/style/noUselessElse: <explanation>
       } else{
         return (

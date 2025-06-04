@@ -107,3 +107,7 @@ Criar as tabelas na pasta `prisma/esquema.prisma` conforme [documentação.](htt
 ``` node
 npx prisma migrate dev --name init
 ```
+
+### Atualização de versão dos pacotes
+
+Caso comece a informar que os pacotes instalados são de versão anterior a esperada, basta usar o comando `npx expo install --fix`para atualizar.

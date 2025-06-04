@@ -53,7 +53,7 @@ export default function InputHidden({
       >
         <TextInput
           style={[
-            {width:"90%", padding: NewRem(0.2)},
+            {width:"90%", justifyContent:"center",},
           ]}
           onFocus={() => {
             setFocused(true)

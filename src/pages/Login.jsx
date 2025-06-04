@@ -8,8 +8,12 @@ import {
 	Platform,
 	ScrollView,
 	KeyboardAvoidingView,
-	Alert,
+	Alert, 
+	TouchableWithoutFeedback, 
+	Keyboard,
+	Dimensions
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { rem, handleCall, NewRem } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
 import IconFacebook from "../assets/iconFacebook.svg";
@@ -17,7 +21,7 @@ import IconGoogle from "../assets/iconGoogle.svg";
 import IconCall from "../assets/call.svg";
 
 import React, { useContext } from "../../node_modules/react";
-import { AuthContext } from "../../App";
+import { AuthContext, fonts } from "../../App";
 
 import {
 	getLocalUser,
@@ -29,13 +33,14 @@ import { stylesRegistrarse } from "./Registrarse";
 
 export default function Login({ navigation }) {
 
+
 	const { ip } = useContext(AuthContext)
 
 	const { setIsSignedIn, isSignedIn } = useContext(AuthContext);
-	
+
 	//Para facilitar navegação
-	const scrollRef = useRef(null);
 	const [isFocused, setIsFocused] = useState(false);
+	const scrollRef = useRef(null);
 	const firstInputRef = useRef(null);
 	const secondInputRef = useRef(null);
 	const thirdInputRef = useRef(null);
@@ -50,6 +55,18 @@ export default function Login({ navigation }) {
 	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
+
+	function addMarginBottom(porcentagem) {
+		const { width, height } = Dimensions.get('window')
+		let result = (height * porcentagem) / 100
+		console.log('Largura: ', width, ' Altura: ', height, "Resultado: ", result)
+		return result
+	}
+
+	const scrollToTopConfirm = () => {
+		scrollRef.current?.scrollTo({ y: 150, animated: true });
+	};
+
 
 	async function checkLogin() {
 		const data = {
@@ -114,25 +131,24 @@ export default function Login({ navigation }) {
 
 
 	return (
-		<KeyboardAvoidingView
-			style={{flex: 1,
-				alignItems: "center",
-				backgroundColor: "#fff",}}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
-		>
-			<ScrollView
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[stylesMain.containerMain, { gap: 10, alignItems: "center", flex: 1, paddingHorizontal: '10%' }]}
-				keyboardShouldPersistTaps="handled"
-				ref={scrollRef}
-			>
-				<View style={[stylesMain.flexRow, { height: "15%" }]}>
-					<CbmLogo width={rem(4)} height={rem(4)} />
-					<Text style={stylesMain.textMain}>Emergências</Text>
-					<Text style={stylesMain.textMain}>193</Text>
-				</View>
-				{/*
+		//Usando este componente para controlar a are disponível para o aplicativo
+		//sem sobrepor elementos nativos de navegação do android e IOS 
+		<SafeAreaProvider>
+			<SafeAreaView style={[ stylesMain.containerMain, fonts.roboto]}>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<ScrollView
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={[stylesMain.containerMain, { gap: 10, alignItems: "center", paddingHorizontal: '10%' }]}
+						keyboardShouldPersistTaps="handled"
+
+						ref={scrollRef}
+					>
+						<View style={[stylesMain.flexRow, { height: "15%" }]}>
+							<CbmLogo width={rem(4)} height={rem(4)} />
+							<Text style={stylesMain.textMain}>Emergências</Text>
+							<Text style={stylesMain.textMain}>193</Text>
+						</View>
+						{/*
 					<View style={stylesMain.flexRow}>
 						<TouchableOpacity
 							onPress={() => {}}
@@ -215,87 +231,88 @@ export default function Login({ navigation }) {
 					</Text>
 				</View>
 				 */}
-				<View style={[{ height: "50%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
-					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
-					<InputComplex
-						title="E-mail"
-						placeholder="Insira seu e-mail."
-						insightText=""
-						firstRef={firstInputRef}
-						secondRef={secondInputRef}
-						maxLengthInput={100}
-						valueState={userEmail}
-						setValueStateOrFunctionMask={setUserEmail}
-						insightState={insightEmail}
-						setInsightState={setInsightEmail}
-						errorState={errorEmail}
-						setErrorState={setErrorEmail}
-						setFocused={setIsFocused}
-						keyboard="email-address"
-					/>
-					<InputHidden
-						title="Senha"
-						placeholder="Insira sua senha."
-						insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
-						firstRef={secondInputRef}
-						secondRef={thirdInputRef}
-						maxLengthInput={50}
-						valueState={userPassword}
-						setValueStateOrFunctionMask={setUserPassword}
-						insightState={insightPassword}
-						setInsightState={setInsightPassword}
-						errorState={errorPassword}
-						setErrorState={setErrorPassword}
-						setFocused={setIsFocused}
-						hiddenState={hiddenPassword}
-						setHiddenState={setHiddenPassword}
-					/>
-					<TouchableOpacity
-						onPress={() => {
-							checkLogin();
-						}}
-						style={[
-							stylesMain.buttonSemiRounded,
-							stylesMain.backgroundRed,
-							stylesMain.with80,
-						]}
-					>
-						<Text
-							style={stylesMain.textoButtonWith}
-							ref={thirdInputRef}
-						>
-							Acessar
-						</Text>
-					</TouchableOpacity>
-				</View>
-				<View style={[{ width: '100%', height: "20%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
-					<TouchableOpacity
-						onPress={() => {
-							getLocalUser();
-						}}
-					>
-						<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
-					</TouchableOpacity>
-					<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>
-					<TouchableOpacity
-						accessibilityLabel="Ir para a tela de registro"
-						onPress={() => {
-							navigation.navigate("Registrar-se");
-						}}
-					>
-						<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
-					</TouchableOpacity>
-				</View>
-				<View style={[{ height: '10%', justifyContent: 'center', alignItems: 'center', }]}>
-					<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
-						<IconCall width={rem(1.5)} height={rem(1.5)} />
-						<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
-					</TouchableOpacity>
-				</View>
-				<View style={[{ display: isFocused ? "flex" : "none", marginBottom: '25%' }]}><Text> </Text></View>
-
-			</ScrollView>
-		</KeyboardAvoidingView>
+						<View style={[{ height: "55%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
+							<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
+							<InputComplex
+								title="E-mail"
+								placeholder="Insira seu e-mail."
+								insightText=""
+								firstRef={firstInputRef}
+								secondRef={secondInputRef}
+								maxLengthInput={100}
+								valueState={userEmail}
+								setValueStateOrFunctionMask={setUserEmail}
+								insightState={insightEmail}
+								setInsightState={setInsightEmail}
+								errorState={errorEmail}
+								setErrorState={setErrorEmail}
+								setFocused={setIsFocused}
+								keyboard="email-address"
+							/>
+							<InputHidden
+								title="Senha"
+								placeholder="Insira sua senha."
+								insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
+								firstRef={secondInputRef}
+								secondRef={thirdInputRef}
+								maxLengthInput={50}
+								valueState={userPassword}
+								setValueStateOrFunctionMask={setUserPassword}
+								insightState={insightPassword}
+								setInsightState={setInsightPassword}
+								errorState={errorPassword}
+								setErrorState={setErrorPassword}
+								setFocused={setIsFocused}
+								hiddenState={hiddenPassword}
+								setHiddenState={setHiddenPassword}
+							/>
+							<TouchableOpacity
+								onPress={() => {
+									checkLogin();
+								}}
+								style={[
+									stylesMain.buttonSemiRounded,
+									stylesMain.backgroundRed,
+									stylesMain.with80,
+								]}
+							>
+								<Text
+									style={stylesMain.textoButtonWith}
+									ref={thirdInputRef}
+								>
+									Acessar
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={[{ width: '100%', height: "15%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
+							<TouchableOpacity
+								onPress={() => {
+									getLocalUser();
+								}}
+							>
+								<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
+							</TouchableOpacity>
+							<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>
+							<TouchableOpacity
+								accessibilityLabel="Ir para a tela de registro"
+								onPress={() => {
+									navigation.navigate("Registrar-se");
+								}}
+							>
+								<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={[{ height: '10%', justifyContent: 'center', alignItems: 'center', }]}>
+							<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
+								<IconCall width={rem(1.5)} height={rem(1.5)} />
+								<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
+							</TouchableOpacity>
+						</View>
+						<View style={[{ display: isFocused ? "flex" : "none", height:addMarginBottom(30), backgroundColor: '#000', }]}><Text> .</Text></View>
+					</ScrollView>
+				</TouchableWithoutFeedback>
+			</SafeAreaView>
+		</SafeAreaProvider>
 
 	);
 }
@@ -393,9 +410,11 @@ export const stylesMain = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#94a3b8",
 		borderRadius: 4,
-		padding: NewRem(0.2),
-		fontSize: NewRem(0.35),
+		paddingHorizontal: 10,
+		paddingTop: 2,
+		fontSize: 16,
 		height: 45,
+		justifyContent: "center",
 	},
 	textoButtonWith: {
 		fontSize: rem(1),

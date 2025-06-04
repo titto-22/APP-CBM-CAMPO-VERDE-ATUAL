@@ -214,3 +214,9 @@ export const styles = StyleSheet.create({
 		drawerInactiveTintColor: "#e7e7e7",
 	},
 });
+
+export const fonts = StyleSheet.create({
+	roboto:{
+		fontFamily:'Roboto-Medium'
+	}
+})
