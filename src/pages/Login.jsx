@@ -58,14 +58,13 @@ export default function Login({ navigation }) {
 
 	function addMarginBottom(porcentagem) {
 		const { width, height } = Dimensions.get('window')
-		let result = (height * porcentagem) / 100
-		console.log('Largura: ', width, ' Altura: ', height, "Resultado: ", result)
+		const result = (height * porcentagem) / 100
 		return result
 	}
 
-	const scrollToTopConfirm = () => {
+	function scrollToTopConfirm() {
 		scrollRef.current?.scrollTo({ y: 150, animated: true });
-	};
+	}
 
 
 	async function checkLogin() {

@@ -227,6 +227,7 @@ export const styleLocation = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-start",
 		backgroundColor: "#fff",
+		paddingBottom:24
 	},
 	maps: {
 		height: "85%",
