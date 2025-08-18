@@ -40,10 +40,17 @@ function DadosEmergencia({ route, navigation }) {
 		localDescrepitionRef.current = text;
 	}, []);
 
-	async function salveIncident(address, descripition) {
-		const existingIncidents = await getLocalIncident();
-		const newIncident = [localName.value, localCPF.value, dadosEmergencia.tipoEmergencia, address, descripition];
-
+	async function salveOccurrence() {
+		const newIncident = {
+      name: localName,
+      cpf: localCPF,
+      address: localAddressRef.current,
+      description: localDescrepitionRef.current,
+      tipoEmergencia: dadosEmergencia.tipoEmergencia,
+      hasVictims: hasVictims,
+      numberOfVictims: numberOfVictims,
+      victimCondition: victimCondition,
+    };
 		let updatedIncidents;
 
 		if (existingIncidents === null) {
@@ -184,8 +191,7 @@ function DadosEmergencia({ route, navigation }) {
 					/>
 					<TouchableOpacity
 						onPress={() => {
-							salveIncident(localAddressRef.current, localDescrepitionRef.current)
-								;
+							salveOccurrence();
 						}}
 						style={[
 							stylesMain.buttonSemiRounded,
