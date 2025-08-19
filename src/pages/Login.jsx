@@ -14,7 +14,7 @@ import {
 	Dimensions
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { rem, handleCall, NewRem } from "../components/function";
+import { rem, handleCall, NewRem, salveLocalEmailUser } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
 import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
@@ -92,7 +92,8 @@ export default function Login({ navigation }) {
 			})
 			.then((data) => {
 				console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
-				// Após a resposta de sucesso do servidor, redirecionar o usuário		
+				// Após a resposta de sucesso do servidor, redirecionar o usuário
+				salveLocalEmailUser(userEmail);		
 				setIsSignedIn(true);
 			})
 			.catch((error) => {

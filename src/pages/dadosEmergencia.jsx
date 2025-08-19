@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, memo } from "react";
+import { useState, useRef, useCallback, memo, useContext } from "react";
 import {
 	Text,
 	View,
@@ -12,15 +12,16 @@ import {
   Switch
 } from "react-native";
 import { stylesMain } from "../pages/Login";
-import { getLocalCPF, getLocalName, rem, salveLocalIncident, removeIncident, getLocalIncident, resetLocalIncident } from "../components/function";
+import { getLocalCPF, getLocalName, rem, salveLocalIncident, removeIncident, getLocalIncident, resetLocalIncident, getLocalUser } from "../components/function";
+import { AuthContext, fonts } from "../../App";
 
 
 function DadosEmergencia({ route, navigation }) {
 
-	const dadosEmergencia = route.params;
+  const { ip } = useContext(AuthContext)
 
-	const localName = getLocalName()
-	const localCPF = getLocalCPF()
+
+	const dadosEmergencia = route.params;
 
 	// Armazena valores sem causar re-renderização
 	const localAddressRef = useRef(dadosEmergencia.address || "");
@@ -31,49 +32,7 @@ function DadosEmergencia({ route, navigation }) {
 	const secondInputRef = useRef(null);
 	const thirdInputRef = useRef(null);
 
-	// Funções de mudança de texto (não causam re-renderização)
-	const handleAddressChange = useCallback((text) => {
-		localAddressRef.current = text;
-	}, []);
-
-	const handleDescriptionChange = useCallback((text) => {
-		localDescrepitionRef.current = text;
-	}, []);
-
-	async function salveOccurrence() {
-		const newIncident = {
-      name: localName,
-      cpf: localCPF,
-      address: localAddressRef.current,
-      description: localDescrepitionRef.current,
-      tipoEmergencia: dadosEmergencia.tipoEmergencia,
-      hasVictims: hasVictims,
-      numberOfVictims: numberOfVictims,
-      victimCondition: victimCondition,
-    };
-		let updatedIncidents;
-
-		if (existingIncidents === null) {
-			// Nenhum incidente salvo, cria um novo array
-			updatedIncidents = [newIncident];
-		} else {
-			// Já existem incidentes, adiciona o novo ao final
-			updatedIncidents = [...existingIncidents, newIncident];
-		}
-
-		try {
-			await salveLocalIncident(updatedIncidents);
-			Alert.alert("Sucesso", "Notificação de incidente salva com sucesso")
-			navigation.navigate("Emergências");
-		} catch (erro) {
-			console.error("Erro  ao salvar incidente", error)
-			Alert.alert("Erro  ao salvar incidente", error)
-		}
-
-	}
-
-
-  // Estado para armazenar se há vítimas (null = não selecionado, true = sim, false = não)
+   // Estado para armazenar se há vítimas (null = não selecionado, true = sim, false = não)
   const [hasVictims, setHasVictims] = useState(null);
   // Estados para os campos adicionais (apenas se hasVictims for true)
   const [numberOfVictims, setNumberOfVictims] = useState('');
@@ -89,6 +48,15 @@ function DadosEmergencia({ route, navigation }) {
     'Desconhecido',
   ];
 
+	// Funções de mudança de texto (não causam re-renderização)
+	const handleAddressChange = useCallback((text) => {
+		localAddressRef.current = text;
+	}, []);
+
+	const handleDescriptionChange = useCallback((text) => {
+		localDescrepitionRef.current = text;
+	}, []); 
+
   const handleToggle = (value) => {
     setHasVictims(value);
     // Limpa os campos adicionais se o usuário mudar de "Sim" para "Não"
@@ -97,6 +65,62 @@ function DadosEmergencia({ route, navigation }) {
       setVictimCondition('');
     }
   };
+
+  	async function salveOccurrence() {
+		const dataOccurrence = {
+      user:  await getLocalUser(),
+      
+      /*
+      address: localAddressRef.current,
+      description: localDescrepitionRef.current,
+      tipoEmergencia: dadosEmergencia.tipoEmergencia,
+      hasVictims: hasVictims,
+      numberOfVictims: numberOfVictims,
+      victimCondition: victimCondition,
+      */
+    };
+
+    const baseURL = `http://${ip}:3333`;
+
+    fetch(`${baseURL}/create-occurrence`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataOccurrence),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          //console.log(response)
+          return response.json().then(err => { // Tenta ler o corpo JSON de erro
+            err.status = response.status
+            throw err; // Rejoga o erro com o corpo JSON
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+        // Após a resposta de sucesso do servidor, grava dados localmente para posterior recuperação        
+        // Depois exibe mensagem de sucesso e redirecionar o usuário para tela Home
+        Alert.alert("Sucesso", "Usuário criado com sucesso.", [
+          {
+            text: "OK", onPress: () => {
+              console.log("Logado com sucesso: OK")
+            }
+          },
+        ],
+          { cancelable: false }
+        )
+      })
+      .catch((error) => {
+        console.error(Object.entries(error))
+        console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
+        Alert.alert("Atenção", `${error.message}`)
+
+      })
+
+	}
 	
 
 	return (
