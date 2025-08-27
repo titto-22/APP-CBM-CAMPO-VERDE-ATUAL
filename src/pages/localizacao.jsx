@@ -104,7 +104,7 @@ export default function Localizacao({ route, navigation }) {
 					latitude: location.coords.latitude,
 					longitude: location.coords.longitude,
 					tipoEmergencia: tipoEmergencia.tipoEmergencia,
-					address: formattedAddress,
+					addressFull: formattedAddress,
 				});
 			} catch (error) {
 				console.error("Erro ao obter o endereço:", error);
@@ -113,7 +113,7 @@ export default function Localizacao({ route, navigation }) {
 					latitude: location.coords.latitude,
 					longitude: location.coords.longitude,
 					tipoEmergencia: tipoEmergencia.tipoEmergencia,
-					address: "",
+					addressFull: "",
 				});
 			}
 		}
@@ -176,29 +176,40 @@ export default function Localizacao({ route, navigation }) {
 										const address = addressArray[0];
 										let formattedAddress = "";
 
-										if (address.street) {
-											formattedAddress += address.street;
-											if (address.name && address.name !== address.street) {
-												formattedAddress += `, ${address.name}`;
-											}
-										} else if (address.name) {
-											formattedAddress += address.name;
-										}
+										formattedAddress += `${address.street ? `${address.street}` : ""}${address.streetNumber ? `, Numero ${address.streetNumber}` : ""}${address.district ? `, ${address.district}` : ""}${address.city ? `, ${address.city}` : ""}${address.region ? `, ${address.region}` : ""}${address.postalCode ? `, CEP ${address.postalCode}` : ""}${address.country ? `, ${address.country}` : ""}`;
 
-										formattedAddress += `${address.city ? `, ${address.city}` : ""}${address.region ? `, ${address.region}` : ""}${address.country ? `, ${address.country}` : ""}`;
-
-										navigation.navigate("Dados da Emergência", {
+										const dataLocation={
 											latitude: location.coords.latitude,
 											longitude: location.coords.longitude,
 											tipoEmergencia: tipoEmergencia.tipoEmergencia,
-											address: formattedAddress,
-										});
+											addressFull: formattedAddress,
+										}
+										
+										if(address.street) {
+											dataLocation.addressStreet= address.street
+										}
+										if(address.streetNumber) {
+											dataLocation.addressNumber= address.streetNumber
+										}
+										if(address.district) {
+											dataLocation.addressDistrict= address.district
+										}
+										if(address.city) {
+											dataLocation.addressCity= address.city
+										}
+										if(address.region) {
+											dataLocation.addressRegion= address.region
+										}
+										if(address.postalCode) {
+											dataLocation.addressPostalCode= address.postalCode
+										}
+										navigation.navigate("Dados da Emergência", dataLocation)
 									} else {
 										navigation.navigate("Dados da Emergência", {
 											latitude: location.coords.latitude,
 											longitude: location.coords.longitude,
 											tipoEmergencia: tipoEmergencia.tipoEmergencia,
-											address: "",
+											addressFull: "",
 										});
 									}
 								} catch (error) {
@@ -207,7 +218,7 @@ export default function Localizacao({ route, navigation }) {
 										latitude: location.coords.latitude,
 										longitude: location.coords.longitude,
 										tipoEmergencia: tipoEmergencia.tipoEmergencia,
-										address: "",
+										addressFull: "",
 									});
 								}
 							}

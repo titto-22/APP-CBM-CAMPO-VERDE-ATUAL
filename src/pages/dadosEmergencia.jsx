@@ -24,8 +24,8 @@ function DadosEmergencia({ route, navigation }) {
 	const dadosEmergencia = route.params;
 
 	// Armazena valores sem causar re-renderização
-	const localAddressRef = useRef(dadosEmergencia.address || "");
-	const localDescrepitionRef = useRef("");
+	const localAddressRef = useRef(dadosEmergencia.addressFull || "");
+	const localDescriptionRef = useRef("");
 
 	// Refs para os inputs
 	const firstInputRef = useRef(null);
@@ -33,9 +33,9 @@ function DadosEmergencia({ route, navigation }) {
 	const thirdInputRef = useRef(null);
 
    // Estado para armazenar se há vítimas (null = não selecionado, true = sim, false = não)
-  const [hasVictims, setHasVictims] = useState(null);
+  const [hasVictims, setHasVictims] = useState(false);
   // Estados para os campos adicionais (apenas se hasVictims for true)
-  const [numberOfVictims, setNumberOfVictims] = useState('');
+  const [numberOfVictims, setNumberOfVictims] = useState(0);
   const [victimCondition, setVictimCondition] = useState('');
 
   // Opções de condição da vítima para o campo de seleção
@@ -54,14 +54,14 @@ function DadosEmergencia({ route, navigation }) {
 	}, []);
 
 	const handleDescriptionChange = useCallback((text) => {
-		localDescrepitionRef.current = text;
+		localDescriptionRef.current = text;
 	}, []); 
 
   const handleToggle = (value) => {
     setHasVictims(value);
     // Limpa os campos adicionais se o usuário mudar de "Sim" para "Não"
     if (!value) {
-      setNumberOfVictims('');
+      setNumberOfVictims(0);
       setVictimCondition('');
     }
   };
@@ -69,17 +69,39 @@ function DadosEmergencia({ route, navigation }) {
   	async function salveOccurrence() {
 		const dataOccurrence = {
       user:  await getLocalUser(),
-      
-      /*
-      address: localAddressRef.current,
-      description: localDescrepitionRef.current,
-      tipoEmergencia: dadosEmergencia.tipoEmergencia,
-      hasVictims: hasVictims,
-      numberOfVictims: numberOfVictims,
-      victimCondition: victimCondition,
-      */
+      natOco: dadosEmergencia.tipoEmergencia,
+      addressFull: localAddressRef.current,
+      description: localDescriptionRef.current,
+      hasVictim: hasVictims,
     };
-
+    
+    if(dadosEmergencia.latitude && dadosEmergencia.longitude){
+      dataOccurrence.geoLat = dadosEmergencia.latitude
+      dataOccurrence.geoLong = dadosEmergencia.longitude
+    }
+    if(dadosEmergencia.addressStreet){
+      dataOccurrence.addressLog= dadosEmergencia.addressStreet
+    }
+    if(dadosEmergencia.addressNumber){
+      dataOccurrence.addressNum= dadosEmergencia.addressNumber
+    }
+    if(dadosEmergencia.addressDistrict){
+      dataOccurrence.addressBairro= dadosEmergencia.addressDistrict
+    }
+    if(dadosEmergencia.addressCity){
+      dataOccurrence.addressCity= dadosEmergencia.addressCity
+    }
+    if(dadosEmergencia.addressRegion){
+      dataOccurrence.addressState= dadosEmergencia.addressRegion
+    }
+    if(dadosEmergencia.addressPostalCode){
+      dataOccurrence.addressCEP= dadosEmergencia.addressPostalCode
+    }
+    if(hasVictims === true){
+      dataOccurrence.victimsQuantity = numberOfVictims;
+      dataOccurrence.victimCondition = victimCondition;
+    }
+    console.log("Dados a serem enviados:", dataOccurrence);
     const baseURL = `http://${ip}:3333`;
 
     fetch(`${baseURL}/create-occurrence`, {
@@ -131,8 +153,9 @@ function DadosEmergencia({ route, navigation }) {
 			<ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
 				<View style={[stylesDadosEmergencia.containerMain, {paddingBottom:24}]}>
 					<Text style={[stylesMain.textBase, { paddingVertical: rem(1) }]}>
-						INFORME OS DADOS DA OCORRÊNCIA: {dadosEmergencia.tipoEmergencia}
-					</Text>		
+						Informe os dados da Ocorrência: {dadosEmergencia.tipoEmergencia}
+					</Text>	
+          <Text style={stylesDadosEmergencia.titleInput}>Informações sobre vítima(s):</Text>
           <View style={[{flexDirection:'row', alignItems:'center',justifyContent:'space-between',width:'100%',}, stylesDadosEmergencia.borderContainer]}>
             <Text style={stylesDadosEmergencia.questionText}>Há vítimas no local da ocorrência?</Text>
             <Switch 
@@ -205,11 +228,10 @@ function DadosEmergencia({ route, navigation }) {
 					<TextInput
 						style={[stylesDadosEmergencia.textArea, stylesDadosEmergencia.borderContainer]}
 						onChangeText={handleDescriptionChange}
-						defaultValue={localDescrepitionRef.current}
+						defaultValue={localDescriptionRef.current}
 						placeholder="Descreva o incidente"
 						multiline={true}
-						numberOfLines={4}
-						maxLength={500}
+						maxLength={1000}
 						ref={secondInputRef} //define a referencia
 						returnKeyType="next" //define botão no teclado de próximo
 					/>
@@ -269,7 +291,7 @@ const stylesDadosEmergencia = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#fff",
 		paddingTop: rem(1),
-		paddingEnd: rem(1),
+		paddingEnd: 24,
 		alignItems: "center",
 		paddingHorizontal: "10%",
 	},
