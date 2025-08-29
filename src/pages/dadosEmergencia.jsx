@@ -98,8 +98,8 @@ function DadosEmergencia({ route, navigation }) {
       dataOccurrence.addressCEP= dadosEmergencia.addressPostalCode
     }
     if(hasVictims === true){
-      dataOccurrence.victimsQuantity = numberOfVictims;
-      dataOccurrence.victimCondition = victimCondition;
+      dataOccurrence.victimsQuantity = Number(numberOfVictims);
+      dataOccurrence.conditionVictim = victimCondition;
     }
     console.log("Dados a serem enviados:", dataOccurrence);
     const baseURL = `http://${ip}:3333`;
