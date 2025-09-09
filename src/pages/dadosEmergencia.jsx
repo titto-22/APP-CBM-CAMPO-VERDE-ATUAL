@@ -100,7 +100,17 @@ function DadosEmergencia({ route, navigation }) {
     if(hasVictims === true){
       dataOccurrence.victimsQuantity = Number(numberOfVictims);
       dataOccurrence.conditionVictim = victimCondition;
+      if(!numberOfVictims || numberOfVictims <= 0){
+        Alert.alert("Atenção", "Por favor, informe o número de vítimas.");
+        return; // Sai da função sem enviar os dados
+      }
+      if(!victimCondition){
+        Alert.alert("Atenção", "Por favor, selecione a condição da vítima.");
+        return; // Sai da função sem enviar os dados
+      }
     }
+    
+
     console.log("Dados a serem enviados:", dataOccurrence);
     const baseURL = `http://${ip}:3333`;
 
@@ -122,13 +132,13 @@ function DadosEmergencia({ route, navigation }) {
         return response.json();
       })
       .then((data) => {
-        console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+        console.log("Sucesso conexão: ", Object.entries(data), 'Ocorrência Registrada');
         // Após a resposta de sucesso do servidor, grava dados localmente para posterior recuperação        
         // Depois exibe mensagem de sucesso e redirecionar o usuário para tela Home
-        Alert.alert("Sucesso", "Usuário criado com sucesso.", [
+        Alert.alert("Sucesso", "Ocorrência criado com sucesso.", [
           {
             text: "OK", onPress: () => {
-              console.log("Logado com sucesso: OK")
+              navigation.navigate("Emergências");
             }
           },
         ],
@@ -152,8 +162,11 @@ function DadosEmergencia({ route, navigation }) {
 		>
 			<ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
 				<View style={[stylesDadosEmergencia.containerMain, {paddingBottom:24}]}>
-					<Text style={[stylesMain.textBase, { paddingVertical: rem(1) }]}>
-						Informe os dados da Ocorrência: {dadosEmergencia.tipoEmergencia}
+					<Text style={[stylesMain.textBase, { paddingTop: rem(1), fontSize: rem(1.2) },]}>
+						Ocorrência:
+					</Text>	
+					<Text style={[stylesMain.textBase, { paddingBottom: rem(1) }]}>
+            {dadosEmergencia.tipoEmergencia}
 					</Text>	
           <Text style={stylesDadosEmergencia.titleInput}>Informações sobre vítima(s):</Text>
           <View style={[{flexDirection:'row', alignItems:'center',justifyContent:'space-between',width:'100%',}, stylesDadosEmergencia.borderContainer]}>
@@ -201,10 +214,10 @@ function DadosEmergencia({ route, navigation }) {
               </View>
             </View>
           )}      
-          {dadosEmergencia.address ? (
+          {dadosEmergencia.addressFull ? (
              <View style={{width: '100%'}}>
               <Text style={stylesDadosEmergencia.titleInput}>Endereço informado da ocorrência:</Text>
-              <Text style={[styles.input, {color:'#64748b', padding:4, height:'auto'}]}>{dadosEmergencia.address}</Text>
+              <Text style={[styles.input, {color:'#64748b', paddingVertical:4, paddingHorizontal:8, height:'auto'}]}>{dadosEmergencia.addressFull}</Text>
             </View>
           ) : (
             <View style={{width: '100%'}}>
