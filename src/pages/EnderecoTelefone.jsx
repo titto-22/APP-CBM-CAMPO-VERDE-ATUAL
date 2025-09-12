@@ -186,6 +186,7 @@ export default function EnderecoTelefone({ route, navigation }) {
           console.log("Sucesso conexão com Api VIACEP", data);
           if (data.erro) {
             setInsightCEP(true)
+            setErrorCEP(true)
             setDisableInputStreet(false)
             setDisableInputDistrict(false)
             setDisableInputComplementAddress(false)
@@ -197,8 +198,10 @@ export default function EnderecoTelefone({ route, navigation }) {
             setUserCity("")
             setUserState("")
             setIsValidateCEP(false)
+            secondInputRef.current.focus()
           } else {
             setInsightCEP(false)
+            setErrorCEP(false)
             setIsValidateCEP(true)
             if (data.logradouro) {
               setInsightStreet(false)

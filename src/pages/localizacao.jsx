@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -30,11 +31,22 @@ export default function Localizacao({ route, navigation }) {
 	const watchIdRef = useRef(null);
 	const initialRegionRef = useRef(null); // Referência para a região inicial
 
-	//função para solicitar permissão de acesso a localizaçao do usuário
-	async function requestLocationPermissions() {
+	// Função para verificar permissão sem solicitar
+	const checkLocationPermission = useCallback(async () => {
 		try {
-			const { granted } = await requestForegroundPermissionsAsync();
-			if (granted) {
+			const { status } = await requestForegroundPermissionsAsync();
+			return status === "granted";
+		} catch (error) {
+			return false;
+		}
+	}, []);
+
+	// Função para solicitar permissão e buscar localização
+	const requestLocationPermissions = useCallback(async () => {
+		setLoading(true);
+		try {
+			const { status } = await requestForegroundPermissionsAsync();
+			if (status === "granted") {
 				const currentPosition = await getCurrentPositionAsync();
 				setLocation(currentPosition);
 				initialRegionRef.current = {
@@ -46,7 +58,7 @@ export default function Localizacao({ route, navigation }) {
 			} else {
 				Alert.alert(
 					"Permissão Negada",
-					"O aplicativo precisa da sua localização.",
+					"O aplicativo precisa da sua localização para continuar. Por favor, autorize nas configurações ou tente novamente.",
 				);
 			}
 		} catch (error) {
@@ -55,12 +67,24 @@ export default function Localizacao({ route, navigation }) {
 		} finally {
 			setLoading(false);
 		}
-	}
+	}, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+
+	// Solicita permissão ao montar a tela
 	useEffect(() => {
 		requestLocationPermissions();
-	}, []);
+	}, [requestLocationPermissions]);
+
+	// Revalida permissão ao voltar para a tela
+	useEffect(() => {
+		const unsubscribe = navigation.addListener("focus", async () => {
+			const hasPermission = await checkLocationPermission();
+			if (!hasPermission) {
+				await requestLocationPermissions();
+			}
+		});
+		return unsubscribe;
+	}, [navigation, checkLocationPermission, requestLocationPermissions]);
 
 	useEffect(() => {
 		if (location && initialRegionRef.current) {
