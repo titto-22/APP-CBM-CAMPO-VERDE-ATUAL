@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Platform, Linking } from "react-native";
 import {
 	View,
 	Text,
@@ -11,6 +12,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import {
 	requestForegroundPermissionsAsync,
+	getForegroundPermissionsAsync,
 	getCurrentPositionAsync,
 	watchPositionAsync,
 	LocationAccuracy,
@@ -31,60 +33,172 @@ export default function Localizacao({ route, navigation }) {
 	const watchIdRef = useRef(null);
 	const initialRegionRef = useRef(null); // Referência para a região inicial
 
-	// Função para verificar permissão sem solicitar
-	const checkLocationPermission = useCallback(async () => {
-		try {
-			const { status } = await requestForegroundPermissionsAsync();
-			return status === "granted";
-		} catch (error) {
-			return false;
-		}
-	}, []);
 
-	// Função para solicitar permissão e buscar localização
-	const requestLocationPermissions = useCallback(async () => {
+	// Novo fluxo de permissão: tenta 2 vezes, se negar, volta para Home
+
+
+	const requestLocationWithFlow = useCallback(async () => {
 		setLoading(true);
+		// Primeiro, verifica se já tem permissão
 		try {
-			const { status } = await requestForegroundPermissionsAsync();
-			if (status === "granted") {
-				const currentPosition = await getCurrentPositionAsync();
-				setLocation(currentPosition);
-				initialRegionRef.current = {
-					latitude: currentPosition.coords.latitude,
-					longitude: currentPosition.coords.longitude,
-					latitudeDelta: 0.005,
-					longitudeDelta: 0.005,
-				};
-			} else {
-				Alert.alert(
-					"Permissão Negada",
-					"O aplicativo precisa da sua localização para continuar. Por favor, autorize nas configurações ou tente novamente.",
-				);
+			const perm = await getForegroundPermissionsAsync();
+			if (perm.status === "granted") {
+				try {
+					const currentPosition = await getCurrentPositionAsync();
+					setLocation(currentPosition);
+					initialRegionRef.current = {
+						latitude: currentPosition.coords.latitude,
+						longitude: currentPosition.coords.longitude,
+						latitudeDelta: 0.005,
+						longitudeDelta: 0.005,
+					};
+				} catch (locError) {
+					console.error("Erro ao obter localização atual:", locError);
+					Alert.alert(
+						"Localização desativada",
+						"Não foi possível obter a localização atual. Verifique se o GPS/serviço de localização está ativado.",
+						[
+							{
+								text: "Abrir configurações",
+								onPress: () => {
+									if (Platform.OS === "android") {
+										Linking.openSettings();
+									}
+								}
+							},
+							{ text: "OK" }
+						]
+					);
+				}
+				setLoading(false);
+				return;
 			}
 		} catch (error) {
-			console.error("Erro ao obter permissão de localização:", error);
-			Alert.alert("Erro", "Não foi possível obter a localização.");
-		} finally {
-			setLoading(false);
+			// Se falhar ao checar permissão, tenta fluxo normal
 		}
-	}, []);
+
+		// Se não tem permissão, segue fluxo de solicitação
+		let attempts = 0;
+		let granted = false;
+		let blocked = false;
+		while (attempts < 2 && !granted && !blocked) {
+			if (attempts > 0) {
+				await new Promise(resolve => {
+					Alert.alert(
+						"Permissão necessária",
+						"O aplicativo precisa da sua localização para funcionar corretamente. Por favor, permita o acesso.",
+						[
+							{ text: "OK", onPress: resolve }
+						]
+					);
+				});
+			} else {
+				await new Promise(resolve => {
+					Alert.alert(
+						"Permissão necessária",
+						"Para continuar, permita que o aplicativo acesse sua localização.",
+						[
+							{ text: "OK", onPress: resolve }
+						]
+					);
+				});
+			}
+			try {
+				const { status, canAskAgain } = await requestForegroundPermissionsAsync();
+				if (status === "granted") {
+					try {
+						const currentPosition = await getCurrentPositionAsync();
+						setLocation(currentPosition);
+						initialRegionRef.current = {
+							latitude: currentPosition.coords.latitude,
+							longitude: currentPosition.coords.longitude,
+							latitudeDelta: 0.005,
+							longitudeDelta: 0.005,
+						};
+						granted = true;
+					} catch (locError) {
+						console.error("Erro ao obter localização atual:", locError);
+						Alert.alert(
+							"Localização desativada",
+							"Não foi possível obter a localização atual. Verifique se o GPS/serviço de localização está ativado.",
+							[
+								{
+									text: "Abrir configurações",
+									onPress: () => {
+										if (Platform.OS === "android") {
+											Linking.openSettings();
+										}
+									}
+								},
+								{ text: "OK" }
+							]
+						);
+						break;
+					}
+				} else if (!canAskAgain && Platform.OS === "android") {
+					blocked = true;
+				}
+			} catch (error) {
+				console.error("Erro ao obter permissão de localização:", error);
+				Alert.alert("Erro", "Não foi possível obter a permissão de localização.");
+			}
+			attempts++;
+		}
+		setLoading(false);
+		if (blocked) {
+			Alert.alert(
+				"Permissão bloqueada",
+				"A permissão de localização foi negada permanentemente. Para continuar, abra as configurações do aplicativo e permita o acesso à localização.",
+				[
+					{
+						text: "Abrir configurações",
+						onPress: () => Linking.openSettings()
+					},
+					{
+						text: "Voltar para Home",
+						style: "cancel",
+						onPress: () => navigation.navigate("Emergências")
+					}
+				]
+			);
+		} else if (!granted) {
+			Alert.alert(
+				"Permissão negada",
+				"Não foi possível obter a permissão de localização. Você será redirecionado para a tela inicial.",
+				[
+					{
+						text: "OK",
+						onPress: () => navigation.navigate("Emergências")
+					}
+				]
+			);
+		}
+	}, [navigation]);
+
 
 
 	// Solicita permissão ao montar a tela
 	useEffect(() => {
-		requestLocationPermissions();
-	}, [requestLocationPermissions]);
+		requestLocationWithFlow();
+	}, [requestLocationWithFlow]);
 
-	// Revalida permissão ao voltar para a tela
+	// Revalida permissão ao voltar para a tela e limpa location ao perder o foco
 	useEffect(() => {
-		const unsubscribe = navigation.addListener("focus", async () => {
-			const hasPermission = await checkLocationPermission();
-			if (!hasPermission) {
-				await requestLocationPermissions();
-			}
-		});
-		return unsubscribe;
-	}, [navigation, checkLocationPermission, requestLocationPermissions]);
+		const onFocus = () => {
+			setLocation(null); // Limpa localização para forçar nova verificação
+			setLoading(true);
+			requestLocationWithFlow();
+		};
+		const onBlur = () => {
+			setLocation(null);
+		};
+		const unsubscribeFocus = navigation.addListener("focus", onFocus);
+		const unsubscribeBlur = navigation.addListener("blur", onBlur);
+		return () => {
+			unsubscribeFocus();
+			unsubscribeBlur();
+		};
+	}, [navigation, requestLocationWithFlow]);
 
 	useEffect(() => {
 		if (location && initialRegionRef.current) {
@@ -172,19 +286,6 @@ export default function Localizacao({ route, navigation }) {
 					<IconMap height={rem(1)} width={rem(1)} />
 				</View>
 				<View style={styleLocation.flexRow}>
-					<TouchableOpacity
-						style={styleLocation.Button}
-						onPress={() => {
-							navigation.navigate("Dados da Emergência", {
-								latitude: false,
-								longitude: false,
-								tipoEmergencia: tipoEmergencia.tipoEmergencia,
-								address: "",
-							});
-						}}
-					>
-						<Text style={styleLocation.textButton}>Não</Text>
-					</TouchableOpacity>
 					<TouchableOpacity
 						style={styleLocation.Button}
 						onPress={async () => {

@@ -46,29 +46,29 @@ export default function Registrarse({ navigation }) {
 	};
 
 	//Variáveis do nome
-	const [userName, setUserName] = useState("Humberto Caio");
+	const [userName, setUserName] = useState("");
 	const [insightName, setInsightName] = useState(false);
 	const [errorName, setErrorName] = useState(false);
 
 	//variáveis do Email
-	const [userEmail, setUserEmail] = useState("Teste@TESTE.com");
+	const [userEmail, setUserEmail] = useState("");
 	const [insightEmail, setInsightEmail] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 
 	//Variáveis da senha primeiro input
-	const [userPassword, setUserPassword] = useState("96135151Ab!");
+	const [userPassword, setUserPassword] = useState("");
 	const [hiddenPassword, setHiddenPassword] = useState(true); //Mostrar ou ocultar senha
 	const [insightPassword, setInsightPassword] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 
 	//Variáveis da senha confirm input
-	const [confirmPassWord, setConfirmPassWord] = useState("96135151Ab!");
+	const [confirmPassWord, setConfirmPassWord] = useState("");
 	const [hiddenConfirm, setHiddenConfirm] = useState(true); //Mostrar ou ocultar senha
 	const [insightConfirm, setInsightConfirm] = useState(false);
 	const [errorConfirm, setErrorConfirm] = useState(false);
 
 	//Variáveis cpf input
-	const [cpf, setCpf] = useState("68258849050");
+	const [cpf, setCpf] = useState("");
 	const [insightCpf, setInsightCpf] = useState(false);
 	const [errorCPF, setErrorCPF] = useState(false);
 
