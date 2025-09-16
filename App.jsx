@@ -1,7 +1,8 @@
 import * as React from "react";
 import { createContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store"; //Usa para armazenar informação seguras (login) localmente
-import { StyleSheet, Linking, Alert } from "react-native";
+import { StyleSheet, Linking, Alert, Modal, View, Text } from "react-native";
+import * as Clipboard from 'expo-clipboard';
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import "react-native-gesture-handler";
@@ -46,9 +47,21 @@ export const AuthContext = createContext({
 /**
  * Contexto Ip de conexão com o banco de dados
  */
-export const ipContext = createContext('172.20.10.3')
+export const ipContext = createContext('192.168.0.94')
 
 export default function App({ navigation }) {
+	const [modalVisible, setModalVisible] = React.useState(false);
+
+	// Função para ação de ajuda
+	const handleAjuda = async () => {
+		const email = "devhumbertoqueiroz@gmail.com";
+		await Clipboard.setStringAsync(email);
+		setModalVisible(true);
+		setTimeout(() => {
+			setModalVisible(false);
+			Linking.openURL(`mailto:${email}`);
+		}, 1500);
+	};
 	///////////////////////////////////////////////////////////
 	/////    Estado que controla se esta logado ou não  /////
 	///////////////////////////////////////////////////////////
@@ -132,12 +145,12 @@ export default function App({ navigation }) {
 					drawerContent={(props) => (
 						<DrawerContentScrollView {...props}>
 							<DrawerItemList {...props} />
-							<DrawerItem
-								label="Ajuda"
-								onPress={() => Linking.openURL("https://www.youtube.com/watch?v=gtKdj9U9oqA")}
-								activeTintColor="#fff"
-								inactiveTintColor="#e7e7e7"
-							/>
+													<DrawerItem
+														label="Ajuda"
+														onPress={handleAjuda}
+														activeTintColor="#fff"
+														inactiveTintColor="#e7e7e7"
+													/>
 							{isSignedIn && (
 								<DrawerItem
 									label="Sair"
@@ -189,6 +202,19 @@ export default function App({ navigation }) {
 					)}
 				</Drawer.Navigator>
 			</NavigationContainer>
+			{/* Modal temporário para feedback de cópia */}
+			<Modal
+				visible={modalVisible}
+				transparent
+				animationType="fade"
+				onRequestClose={() => setModalVisible(false)}
+			>
+				<View style={{ flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'rgba(0,0,0,0.3)' }}>
+								<View style={{ backgroundColor:'#fff', padding:24, borderRadius:12, elevation:4 }}>
+									<Text style={{ fontSize:16, color:'#333' }}>E-mail copiado para a área de transferência!📋</Text>
+								</View>
+				</View>
+			</Modal>
 		</AuthContext.Provider>
 	);
 }

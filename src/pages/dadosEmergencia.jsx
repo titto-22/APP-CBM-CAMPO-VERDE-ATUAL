@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { useState, useRef, useCallback, memo, useContext } from "react";
 import {
-	Text,
+  Text,
 	View,
 	StyleSheet,
 	KeyboardAvoidingView,
@@ -17,27 +18,28 @@ import { AuthContext, fonts } from "../../App";
 
 
 function DadosEmergencia({ route, navigation }) {
-
+  
   const { ip } = useContext(AuthContext)
-
-
+  
+  
 	const dadosEmergencia = route.params;
-
+  
 	// Armazena valores sem causar re-renderização
 	const localAddressRef = useRef(dadosEmergencia.addressFull || "");
-	const localDescriptionRef = useRef("");
-
+  // Removido localDescriptionRef
+  
 	// Refs para os inputs
 	const firstInputRef = useRef(null);
 	const secondInputRef = useRef(null);
 	const thirdInputRef = useRef(null);
-
-   // Estado para armazenar se há vítimas (null = não selecionado, true = sim, false = não)
+  
+  // Estado para armazenar se há vítimas (null = não selecionado, true = sim, false = não)
   const [hasVictims, setHasVictims] = useState(false);
   // Estados para os campos adicionais (apenas se hasVictims for true)
   const [numberOfVictims, setNumberOfVictims] = useState(0);
   const [victimCondition, setVictimCondition] = useState('');
-
+  const [descricao, setDescricao] = useState("");
+  
   // Opções de condição da vítima para o campo de seleção
   const victimConditions = [
     'Ilesa',
@@ -47,16 +49,13 @@ function DadosEmergencia({ route, navigation }) {
     'Fatal',
     'Desconhecido',
   ];
-
+  
 	// Funções de mudança de texto (não causam re-renderização)
 	const handleAddressChange = useCallback((text) => {
-		localAddressRef.current = text;
+    localAddressRef.current = text;
 	}, []);
-
-	const handleDescriptionChange = useCallback((text) => {
-		localDescriptionRef.current = text;
-	}, []); 
-
+  
+	
   const handleToggle = (value) => {
     setHasVictims(value);
     // Limpa os campos adicionais se o usuário mudar de "Sim" para "Não"
@@ -65,13 +64,19 @@ function DadosEmergencia({ route, navigation }) {
       setVictimCondition('');
     }
   };
-
-  	async function salveOccurrence() {
-		const dataOccurrence = {
+  
+  const handleNumberOfVictimsChange = (text) => {
+    // Permite apenas números
+    const numericText = text.replace(/[^0-9]/g, '');
+    setNumberOfVictims(numericText);
+  }
+  
+  async function salveOccurrence() {
+    const dataOccurrence = {
       user:  await getLocalUser(),
       natOco: dadosEmergencia.tipoEmergencia,
       addressFull: localAddressRef.current,
-      description: localDescriptionRef.current,
+      description: descricao,
       hasVictim: hasVictims,
     };
     
@@ -110,10 +115,10 @@ function DadosEmergencia({ route, navigation }) {
       }
     }
     
-
+    
     console.log("Dados a serem enviados:", dataOccurrence);
     const baseURL = `http://${ip}:3333`;
-
+    
     fetch(`${baseURL}/create-occurrence`, {
       method: "POST",
       headers: {
@@ -142,19 +147,29 @@ function DadosEmergencia({ route, navigation }) {
             }
           },
         ],
-          { cancelable: false }
-        )
-      })
-      .catch((error) => {
-        console.error(Object.entries(error))
-        console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
-        Alert.alert("Atenção", `${error.message}`)
-
-      })
-
+        { cancelable: false }
+      )
+    })
+    .catch((error) => {
+      console.error(`Erro: Request Status Error: ${error.status}, message: ${error.message}`);
+      if(error.message.slice(0, 5) === "body/"){
+        Alert.alert("Atenção", `${error.message.split(' ').slice(1).join(' ')}`)
+      } else{
+        Alert.alert("Atenção Erro:", `${error.message}`)
+      }
+      
+    })
 	}
-	
-
+  // Reseta campos ao entrar na tela
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setHasVictims(false);
+      setNumberOfVictims(0);
+      setVictimCondition('');
+  setDescricao("");
+    });
+    return unsubscribe;
+  }, [navigation]);
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -187,7 +202,8 @@ function DadosEmergencia({ route, navigation }) {
                 keyboardType="numeric"
                 placeholder="Ex: 1, 2, 3..."
                 value={numberOfVictims}
-                onChangeText={setNumberOfVictims}
+                onChangeText={handleNumberOfVictimsChange}
+                maxLength={4}
               />
 
               <Text style={styles.label}>Condição da Vítima Principal (ou mais grave):</Text>
@@ -238,16 +254,16 @@ function DadosEmergencia({ route, navigation }) {
 					
 
 					<Text style={stylesDadosEmergencia.titleInput}>Descreva sobre a ocorrência:</Text>
-					<TextInput
-						style={[stylesDadosEmergencia.textArea, stylesDadosEmergencia.borderContainer]}
-						onChangeText={handleDescriptionChange}
-						defaultValue={localDescriptionRef.current}
-						placeholder="Descreva o incidente"
-						multiline={true}
-						maxLength={1000}
-						ref={secondInputRef} //define a referencia
-						returnKeyType="next" //define botão no teclado de próximo
-					/>
+          <TextInput
+            style={[stylesDadosEmergencia.textArea, stylesDadosEmergencia.borderContainer]}
+            onChangeText={(text) => setDescricao(text)}
+            value={descricao}
+            placeholder="Descreva o incidente"
+            multiline={true}
+            maxLength={1000}
+            ref={secondInputRef} //define a referencia
+            returnKeyType="next" //define botão no teclado de próximo
+          />
 					<TouchableOpacity
 						onPress={() => {
 							salveOccurrence();
@@ -329,58 +345,11 @@ const stylesDadosEmergencia = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#f0f2f5',
-  },
-  
- 
-  toggleButtonContainer: {
+  conditionOptionsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 30,
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: '#e0e0e0',
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    backgroundColor: '#ffffff',
-  },
-  buttonSelected: {
-    backgroundColor: '#007bff', // Cor de destaque para o botão selecionado
-    borderColor: '#007bff',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#555',
-  },
-  buttonTextSelected: {
-    color: '#fff', // Cor do texto para o botão selecionado
-  },
-  additionalFieldsContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
-    textAlign: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   label: {
     fontSize: 15,
@@ -388,20 +357,12 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
   },
-  input: {
-    height: 45,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  conditionOptionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#333',
+    textAlign: 'center',
   },
   conditionButton: {
     width: '48%', // Duas colunas
@@ -414,29 +375,27 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
   },
-  conditionButtonSelected: {
-    backgroundColor: '#28a745', // Cor de destaque para a condição selecionada
-    borderColor: '#28a745',
-  },
   conditionButtonText: {
     fontSize: 14,
     color: '#555',
     fontWeight: '500',
     textAlign: 'center',
   },
+  conditionButtonSelected: {
+    backgroundColor: '#28a745', // Cor de destaque para a condição selecionada
+    borderColor: '#28a745',
+  },
+  
   conditionButtonTextSelected: {
     color: '#fff',
   },
-  submitButton: {
-    backgroundColor: '#0056b3',
-    padding: 15,
+  input: {
+    height: 45,
+    borderColor: '#ccc',
+    borderWidth: 1,
     borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    fontSize: 16,
   },
 });

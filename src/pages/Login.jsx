@@ -285,14 +285,14 @@ export default function Login({ navigation }) {
 							</TouchableOpacity>
 						</View>
 						<View style={[{ width: '100%', height: "15%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
-							<TouchableOpacity
+							{/**<TouchableOpacity
 								onPress={() => {
 									getLocalUser();
 								}}
 							>
 								<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
 							</TouchableOpacity>
-							<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>
+							<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>**/}
 							<TouchableOpacity
 								accessibilityLabel="Ir para a tela de registro"
 								onPress={() => {
@@ -308,7 +308,6 @@ export default function Login({ navigation }) {
 								<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
 							</TouchableOpacity>
 						</View>
-						<View style={[{ display: isFocused ? "flex" : "none", height:addMarginBottom(30), backgroundColor: '#000', }]}><Text> .</Text></View>
 					</ScrollView>
 				</TouchableWithoutFeedback>
 			</SafeAreaView>

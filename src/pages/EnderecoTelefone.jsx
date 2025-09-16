@@ -167,8 +167,14 @@ export default function EnderecoTelefone({ route, navigation }) {
    * @returns void 
    * */
   const apiCEP = (cep) => {
+    if (onlyNumber(cep).length < 8) {
+      setIsValidateCEP(false)
+      setInsightCEP(true)
+      setErrorCEP(true)
+      secondInputRef.current.focus()
+      return
+    }
     const clearCEP = onlyNumber(cep)
-    if (clearCEP.length === 8) {
       fetch(`https://viacep.com.br/ws/${onlyNumber(clearCEP)}/json/`, {
         method: "GET",
         headers: {
@@ -178,6 +184,8 @@ export default function EnderecoTelefone({ route, navigation }) {
         .then((response) => {
           if (!response.ok) {
             setIsValidateCEP(false)
+            setInsightCEP(true)
+            setErrorCEP(true)
             throw new Error(`Erro na requisição: ${response.status}`);
           }
           return response.json();
@@ -239,7 +247,7 @@ export default function EnderecoTelefone({ route, navigation }) {
         })
         .finally(() => { });
     }
-  }
+  
 
   // -------------------/////  VALIDAÇÕES  \\\\\\-------------------------------
 
@@ -252,9 +260,6 @@ export default function EnderecoTelefone({ route, navigation }) {
 
   const validateCEP = (number) => {
     const cleanedNumber = onlyNumber(number); // Remove caracteres especiais
-    if (cleanedNumber.length < 8) {
-      return false
-    }
     apiCEP(number)
   };
 
