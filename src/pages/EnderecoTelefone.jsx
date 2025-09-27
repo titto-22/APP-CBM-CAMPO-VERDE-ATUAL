@@ -191,7 +191,6 @@ export default function EnderecoTelefone({ route, navigation }) {
           return response.json();
         })
         .then((data) => {
-          console.log("Sucesso conexão com Api VIACEP", data);
           if (data.erro) {
             setInsightCEP(true)
             setErrorCEP(true)
@@ -418,8 +417,7 @@ export default function EnderecoTelefone({ route, navigation }) {
     if (complementAddress) {
       userData.addressComp = complementAddress
     }
-    const baseURL = `http://${ip}:3333`;
-
+    const baseURL = `https://${ip}`;
     fetch(`${baseURL}/create-user`, {
       method: "POST",
       headers: {
@@ -429,10 +427,13 @@ export default function EnderecoTelefone({ route, navigation }) {
     })
       .then((response) => {
         if (!response.ok) {
-          //console.log(response)
+          return response.text().then(errText => {
+          throw { status: response.status, message: errText };
+          /*
           return response.json().then(err => { // Tenta ler o corpo JSON de erro
             err.status = response.status
             throw err; // Rejoga o erro com o corpo JSON
+            */
           });
         }
         return response.json();

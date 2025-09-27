@@ -47,7 +47,7 @@ export const AuthContext = createContext({
 /**
  * Contexto Ip de conexão com o banco de dados
  */
-export const ipContext = createContext('192.168.0.94')
+export const ipContext = createContext('cbm-app-6qeks.ondigitalocean.app')
 
 export default function App({ navigation }) {
 	const [modalVisible, setModalVisible] = React.useState(false);

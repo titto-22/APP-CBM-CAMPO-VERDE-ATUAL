@@ -115,9 +115,7 @@ function DadosEmergencia({ route, navigation }) {
       }
     }
     
-    
-    console.log("Dados a serem enviados:", dataOccurrence);
-    const baseURL = `http://${ip}:3333`;
+    const baseURL = `https://${ip}`;
     
     fetch(`${baseURL}/create-occurrence`, {
       method: "POST",
@@ -128,7 +126,6 @@ function DadosEmergencia({ route, navigation }) {
     })
       .then((response) => {
         if (!response.ok) {
-          //console.log(response)
           return response.json().then(err => { // Tenta ler o corpo JSON de erro
             err.status = response.status
             throw err; // Rejoga o erro com o corpo JSON

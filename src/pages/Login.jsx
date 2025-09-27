@@ -73,7 +73,7 @@ export default function Login({ navigation }) {
 			password: userPassword
 		}
 
-		fetch(`http://${ip}:3333/login-user`, {
+		fetch(`https://${ip}/login-user`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -82,7 +82,6 @@ export default function Login({ navigation }) {
 		})
 			.then((response) => {
 				if (!response.ok) {
-					//console.log(response)
 					return response.json().then(err => { // Tenta ler o corpo JSON de erro
 						err.status = response.status
 						throw err; // Retorna o erro com o corpo JSON
@@ -91,7 +90,7 @@ export default function Login({ navigation }) {
 				return response.json();
 			})
 			.then((data) => {
-				console.log("Sucesso conexão: ", Object.entries(data), 'usuário criado');
+				console.log("Sucesso conexão: ", Object.entries(data));
 				// Após a resposta de sucesso do servidor, redirecionar o usuário
 				salveLocalEmailUser(userEmail);		
 				setIsSignedIn(true);
