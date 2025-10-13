@@ -38,6 +38,11 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
       ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDixVjFEhW6rUuGghdbrCo4Ltsl46QDE1I"
+        }
+      },
       "package": "com.devhumberto.APPCBM"
     },
     "web": {
