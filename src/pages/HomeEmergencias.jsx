@@ -1,4 +1,6 @@
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import * as React from 'react';
+import * as Location from "expo-location";
 
 import { stylesMain } from '../pages/Login';
 
@@ -12,9 +14,96 @@ import IconAcidente from '../assets/acidente.svg';
 
 import { rem, handleCall } from '../components/function';
 
-export default function HomeEmergencias({navigation}){
+import { PermissionLocation } from '../../App';
 
+
+
+export default function HomeEmergencias({navigation}){
   
+  const { hasPermissionLocation, setHasPermissionLocation } = React.useContext(PermissionLocation);
+  
+  // ----------------EXCLUIR----------
+  React.useEffect(() => {
+  console.log("hasPermissionLocation atualizado:", hasPermissionLocation);
+}, [hasPermissionLocation]);
+
+  function teste(){
+    console.log("hasPermissionLocation atualizado:", hasPermissionLocation);
+  }
+  // ^^^^^^^^^^^----EXCLUIR----^^^^^^^^
+
+
+  /** function handleCheckNavigation
+   * Verifica se tem permissão de localização para ir para página de localização
+   * se não tiver, chama a função de verificação de permissão
+   * @param {string} tipoEmergencia Tipo de emergência selecionada
+   */
+  const handleCheckNavigation = (tipoEmergencia) => {
+    if(hasPermissionLocation){
+      navigation.navigate('Localização', { tipoEmergencia });
+    }
+    if(!hasPermissionLocation){
+      checkPermissionLocation();
+    }
+    return
+  }
+
+  /**
+  * Verifica permissão de localização
+  */
+  const checkPermissionLocation = async ()=>{
+    //Verifica permissão de localização
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    //SE permitido, seta o contexto de controle e finaliza a execução da função
+    console.log("status permission Location", status);
+    if(status === 'granted') {
+      setHasPermissionLocation(true);
+      return true;
+    }
+    
+    //Se não permitido, solicita permissão
+    if (status !== 'granted') {
+      //Location.requestForegroundPermissionsAsync() solicita permissão e exibe o modal nativo do sistema operacional
+      // para o usuário permitir ou negar a permissão de localização
+      //Se o usuário permitir, newStatus recebe 'granted'
+      const { statusAtual: newStatus, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+    
+      //Se a permissão for concedida, atualiza o estado
+      if (newStatus === 'granted') {
+        setHasPermissionLocation(true);
+        return true;
+      }
+      if (newStatus === 'denied' && canAskAgain) {
+        checkPermissionLocation()
+      }
+      //Permissão negada permanentemente (canAskAgain = false)
+      if (newStatus === 'denied' && !canAskAgain) {
+        // Notificar o usuário e oferecer a abertura das configurações
+        Alert.alert(
+          "Permissão de Localização Necessária",
+          "Parece que você negou permanentemente o acesso à localização. Por favor, vá para as configurações do aplicativo para habilitá-lo manualmente.",
+          [
+            { text: "Cancelar", style: "cancel" },
+            { 
+              text: "Abrir Configurações", 
+              onPress: () => {
+                // O Linking do React Native permite abrir as configurações do app no iOS e Android
+                Linking.openSettings(); 
+              } 
+            }
+          ]
+        );
+      }
+      
+
+      return false;
+    }
+    return false;
+  }
+
+//Chama função que verifica permissão ao carregar tela inicial do aplicativo
+checkPermissionLocation();
+    
   return(
     <View style={stylesHome.containerMain}>
       <Text style={stylesHome.textTitle}>
@@ -41,15 +130,9 @@ export default function HomeEmergencias({navigation}){
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          onPress={
-            ()=>{
-              navigation.navigate(
-                'Localização',{
-                  tipoEmergencia:'Parada Respiratória'
-                }
-              )
-            }
-          }
+          onPress={()=>{
+            handleCheckNavigation('Parada Respiratória');               
+          }}
           style={stylesHome.containerTouchableOpacity}
         >
            <View style={stylesHome.boderIcon}>
@@ -60,15 +143,7 @@ export default function HomeEmergencias({navigation}){
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          onPress={
-            ()=>{
-              navigation.navigate(
-                'Localização',{
-                  tipoEmergencia:'Engasgamento'
-                }
-              )
-            }
-          }
+          onPress={ ()=>{handleCheckNavigation('Engasgamento')}}
           style={stylesHome.containerTouchableOpacity}
         >
            <View style={stylesHome.boderIcon}>
@@ -79,15 +154,7 @@ export default function HomeEmergencias({navigation}){
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          onPress={
-            ()=>{
-              navigation.navigate(
-                'Localização',{
-                  tipoEmergencia:'Afogamento'
-                }
-              )
-            }
-          }
+          onPress={()=>{handleCheckNavigation('Afogamento')}}
           style={stylesHome.containerTouchableOpacity}
         >
            <View style={stylesHome.boderIcon}>
@@ -98,15 +165,7 @@ export default function HomeEmergencias({navigation}){
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          onPress={
-            ()=>{
-              navigation.navigate(
-                'Localização',{
-                  tipoEmergencia:'Atropelamento'
-                }
-              )
-            }
-          }
+          onPress={()=>{handleCheckNavigation('Atropelamento')}}
           style={stylesHome.containerTouchableOpacity}
         >
            <View style={stylesHome.boderIcon}>
@@ -116,16 +175,7 @@ export default function HomeEmergencias({navigation}){
             Atropelamento
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={
-            ()=>{
-              navigation.navigate(
-                'Localização',{
-                  tipoEmergencia:'Acidente de Trânsito'
-                }
-              )
-            }
-          }
+        <TouchableOpacity onPress={()=>{handleCheckNavigation('Acidente de Trânsito')}}
           style={stylesHome.containerTouchableOpacity}
         >
            <View style={stylesHome.boderIcon}>
@@ -136,9 +186,14 @@ export default function HomeEmergencias({navigation}){
           </Text>
         </TouchableOpacity>
       </View>
-      <Text style={stylesHome.textCinzaClaro}>
-        Outros
-      </Text>
+       <TouchableOpacity 
+          onPress={
+            ()=>{teste()}}
+        > 
+        <Text style={stylesHome.textCinzaClaro}>
+          Outros
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleCall} style={stylesMain.buttonCall}>
         <IconCall width={rem(2.25)} height={rem(2.25)}/>
         <Text 

@@ -45,6 +45,17 @@ export const AuthContext = createContext({
 });
 
 /**
+ * Contexto de permissão de localização, sempre iniciando em *false*
+ * Utilizado para controlar se o app tem permissão de localização
+ */
+export const PermissionLocation = createContext({
+  hasPermissionLocation: false,
+  setHasPermissionLocation: () => { },	
+});
+
+
+
+/**
  * Contexto Ip de conexão com o banco de dados
  */
 export const ipContext = createContext('cbm-app-6qeks.ondigitalocean.app')
@@ -66,6 +77,7 @@ export default function App({ navigation }) {
 	/////    Estado que controla se esta logado ou não  /////
 	///////////////////////////////////////////////////////////
 	const [isSignedIn, setIsSignedIn] = useState(false);
+	const [hasPermissionLocation, setHasPermissionLocation] = useState(false);
 
 	/**
 	 * **Function handleSetIsSignedIn**
@@ -75,6 +87,15 @@ export default function App({ navigation }) {
 	 * @param {boolean} value valor que sera setado para `IsSignedIn`
 	 */
 	const handleSetIsSignedIn = (value) => setIsSignedIn(value);
+
+	/**
+	 * **Function handlePermissionLocation**
+	 *
+	 * Função que é passada para os componentes através do contexto para manipular 
+	 * ou atualiza o estado do da permissão de usar a localização nesta e em outras páginas
+	 * @param {boolean} value valor que sera setado para `hasPermissionLocation`
+	 */
+	const handlePermissionLocation = (value) => setHasPermissionLocation(value);
 
 	/**
 	 * **Function InitialService**
@@ -137,84 +158,90 @@ export default function App({ navigation }) {
 				ip: React.useContext(ipContext)
 			}}
 		>
-
-			<NavigationContainer>
-				<Drawer.Navigator
-					initialRouteName='Login'
-					screenOptions={styles.styleTitlePagesColorRedBgWhite}
-					drawerContent={(props) => (
-						<DrawerContentScrollView {...props}>
-							<DrawerItemList {...props} />
-													<DrawerItem
-														label="Ajuda"
-														onPress={handleAjuda}
-														activeTintColor="#fff"
-														inactiveTintColor="#e7e7e7"
-													/>
-							{isSignedIn && (
-								<DrawerItem
-									label="Sair"
-									onPress={() => Logout(props.navigation)}
-									activeTintColor="#fff"
-									inactiveTintColor="#e7e7e7"
-								/>
-							)}
-						</DrawerContentScrollView>
-					)}
+			<PermissionLocation.Provider
+				value={{
+					hasPermissionLocation, 
+					setHasPermissionLocation: handlePermissionLocation			}}
 				>
-					{isSignedIn ? (
-						<>
-							<Drawer.Screen
-								name="Emergências"
-								component={HomeEmergencias}
-								options={{ headerBackVisible: false }}
-							/>
-							<Drawer.Screen
-								name="Localização"
-								component={Localizacao}
-								options={{
-									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
-									headerShown: false, // Oculta o título no cabeçalho
-								}}
-							/>
-							<Drawer.Screen
-								name="Dados da Emergência"
-								component={DadosEmergencia}
-								options={{
-									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
-									//headerShown: false, // Oculta o título no cabeçalho
-								}}
-							/>
-						</>
-					) : (
-						<>
-							<Drawer.Screen
-								name="Login"
-								component={Login}
-							//options={{ gestureEnabled: false }}
-							/>
-							<Drawer.Screen name="Registrar-se" component={Registrarse} />
-							<Drawer.Screen name="EnderecoTelefone" component={EnderecoTelefone} options={{
-									drawerItemStyle: { display: "none" }, // Oculta no menu lateral
-									//headerShown: false, // Oculta o título no cabeçalho
-								}}/>
-						</>
-					)}
-				</Drawer.Navigator>
-			</NavigationContainer>
-			{/* Modal temporário para feedback de cópia */}
-			<Modal
-				visible={modalVisible}
-				transparent
-				animationType="fade"
-				onRequestClose={() => setModalVisible(false)}
-			>
-				<View style={{ flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'rgba(0,0,0,0.3)' }}>
-								<View style={{ backgroundColor:'#fff', padding:24, borderRadius:12, elevation:4 }}>
-									<Text style={{ fontSize:16, color:'#333' }}>E-mail copiado para a área de transferência!📋</Text>
-								</View>
-				</View>
-			</Modal>
+
+				<NavigationContainer>
+					<Drawer.Navigator
+						initialRouteName='Login'
+						screenOptions={styles.styleTitlePagesColorRedBgWhite}
+						drawerContent={(props) => (
+							<DrawerContentScrollView {...props}>
+								<DrawerItemList {...props} />
+														<DrawerItem
+															label="Ajuda"
+															onPress={handleAjuda}
+															activeTintColor="#fff"
+															inactiveTintColor="#e7e7e7"
+														/>
+								{isSignedIn && (
+									<DrawerItem
+										label="Sair"
+										onPress={() => Logout(props.navigation)}
+										activeTintColor="#fff"
+										inactiveTintColor="#e7e7e7"
+									/>
+								)}
+							</DrawerContentScrollView>
+						)}
+					>
+						{isSignedIn ? (
+							<>
+								<Drawer.Screen
+									name="Emergências"
+									component={HomeEmergencias}
+									options={{ headerBackVisible: false }}
+								/>
+								<Drawer.Screen
+									name="Localização"
+									component={Localizacao}
+									options={{
+										drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+										headerShown: false, // Oculta o título no cabeçalho
+									}}
+								/>
+								<Drawer.Screen
+									name="Dados da Emergência"
+									component={DadosEmergencia}
+									options={{
+										drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+										//headerShown: false, // Oculta o título no cabeçalho
+									}}
+								/>
+							</>
+						) : (
+							<>
+								<Drawer.Screen
+									name="Login"
+									component={Login}
+								//options={{ gestureEnabled: false }}
+								/>
+								<Drawer.Screen name="Registrar-se" component={Registrarse} />
+								<Drawer.Screen name="EnderecoTelefone" component={EnderecoTelefone} options={{
+										drawerItemStyle: { display: "none" }, // Oculta no menu lateral
+										//headerShown: false, // Oculta o título no cabeçalho
+									}}/>
+							</>
+						)}
+					</Drawer.Navigator>
+				</NavigationContainer>
+				{/* Modal temporário para feedback de cópia */}
+				<Modal
+					visible={modalVisible}
+					transparent
+					animationType="fade"
+					onRequestClose={() => setModalVisible(false)}
+				>
+					<View style={{ flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'rgba(0,0,0,0.3)' }}>
+									<View style={{ backgroundColor:'#fff', padding:24, borderRadius:12, elevation:4 }}>
+										<Text style={{ fontSize:16, color:'#333' }}>E-mail copiado para a área de transferência!📋</Text>
+									</View>
+					</View>
+				</Modal>
+			</PermissionLocation.Provider>
 		</AuthContext.Provider>
 	);
 }
