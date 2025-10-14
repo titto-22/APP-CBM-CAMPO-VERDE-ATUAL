@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store"; //Usa para armazenar informação seguras (login) localmente
-import { StyleSheet, Linking, Alert, Modal, View, Text } from "react-native";
+import { StyleSheet, Linking, Alert, Modal, View, Text, StatusBar } from "react-native";
 import * as Clipboard from 'expo-clipboard';
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 //import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -151,6 +151,8 @@ export default function App({ navigation }) {
 	}
 
 	return (
+		<>
+		<StatusBar backgroundColor="#fff" barStyle="dark-content" />
 		<AuthContext.Provider
 			value={{
 				isSignedIn,
@@ -243,6 +245,7 @@ export default function App({ navigation }) {
 				</Modal>
 			</PermissionLocation.Provider>
 		</AuthContext.Provider>
+		</>
 	);
 }
 
