@@ -152,7 +152,7 @@ export default function App({ navigation }) {
 
 	return (
 		<>
-		<StatusBar backgroundColor="#fff" barStyle="dark-content" />
+		<StatusBar backgroundColor="#000000ff" barStyle={"light-content"} />
 		<AuthContext.Provider
 			value={{
 				isSignedIn,

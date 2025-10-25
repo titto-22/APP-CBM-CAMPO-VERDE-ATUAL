@@ -14,7 +14,7 @@ import {
 	Dimensions
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { rem, handleCall, NewRem, salveLocalEmailUser } from "../components/function";
+import { rem, handleCall, NewRem, salveLocalEmailUser, vh } from "../components/function";
 import CbmLogo from "../assets/LogoCBM.svg";
 import IconFacebook from "../assets/iconFacebook.svg";
 import IconGoogle from "../assets/iconGoogle.svg";
@@ -132,186 +132,185 @@ export default function Login({ navigation }) {
 	return (
 		//Usando este componente para controlar a are disponível para o aplicativo
 		//sem sobrepor elementos nativos de navegação do android e IOS 
-		<SafeAreaProvider>
-			<SafeAreaView style={[ stylesMain.containerMain, fonts.roboto]}>
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-					<ScrollView
-						showsVerticalScrollIndicator={false}
-						contentContainerStyle={[stylesMain.containerMain, { gap: 10, alignItems: "center", paddingHorizontal: '10%' }]}
-						keyboardShouldPersistTaps="handled"
+		<KeyboardAvoidingView
+			style={stylesRegistrarse.containerMain}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Ajuste se necessário
+		>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={[stylesMain.containerMain, { gap: 10, alignItems: "center", paddingHorizontal: '10%' }]}
+				keyboardShouldPersistTaps="handled"
 
-						ref={scrollRef}
-					>
-						<View style={[stylesMain.flexRow, { height: "15%" }]}>
-							<CbmLogo width={rem(4)} height={rem(4)} />
-							<Text style={stylesMain.textMain}>Emergências</Text>
-							<Text style={stylesMain.textMain}>193</Text>
-						</View>
-						{/*
-					<View style={stylesMain.flexRow}>
-						<TouchableOpacity
-							onPress={() => {}}
-							style={stylesMain.buttonSemiRounded}
-						>
-							<View style={stylesMain.containerIcon}>
-								<IconFacebook width={rem(2.6)} height={rem(2.5)} />
-							</View>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => {}}
-							style={stylesMain.buttonSemiRounded}
-						>
-							<View style={stylesMain.containerIcon}>
-								<IconGoogle width={rem(2.25)} height={rem(2.25)} />
-							</View>
-						</TouchableOpacity>
-					</View>
-				<View style={stylesMain.with80}>
-					<View style={[stylesMain.containerTextTopInput]}>
-						<Text style={stylesMain.textTopInput}>E-mail:</Text>
-					</View>
-					<TextInput
-						style={[stylesMain.input, stylesMain.withFull]}
-						onChangeText={(text) => {
-							if (emailRef.current) {
-								emailRef.current.value = text.toLowerCase();
-							}
-						}}
-						ref={emailRef}
-						placeholder="Insira seu e-mail"
-						keyboardType="email-address"
-					/>
-
-					<View style={stylesMain.containerTextTopInput}>
-						<Text style={stylesMain.textTopInput}>Senha:</Text>
-					</View>
-					<View
-						style={[
-							stylesMain.input,
-							stylesMain.withFull,
-							{
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "space-between",
-							},
-						]}
-					>
-						<TextInput
-							style={{ width: "90%" }}
-							onChangeText={(text) => {
-								if (passwordRef.current) {
-									passwordRef.current.value = text;
-								}
-							}}
-							ref={passwordRef}
-							placeholder="Insira sua senha"
-							secureTextEntry={hiddenPassword}
-						/>
-						<TouchableOpacity
-							onPress={() => {
-								setHiddenPassword(!hiddenPassword);
-							}}
-						>
-							{hiddenPassword ? (
-								<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-							) : (
-								<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
-							)}
-						</TouchableOpacity>
-					</View>
-					<Text
-						style={[
-							{ display: errorLogin ? "flex" : "none" },
-							stylesMain.textRed,
-							stylesMain.opacity,
-						]}
-					>
-						Usuário ou senha incorretos, verifique o e-mail e senha.
-					</Text>
+				ref={scrollRef}
+			>
+				<View style={[stylesMain.flexRow, { height: vh(15) }]}>
+					<CbmLogo width={rem(4)} height={rem(4)} />
+					<Text style={stylesMain.textMain}>Emergências</Text>
+					<Text style={stylesMain.textMain}>193</Text>
 				</View>
-				 */}
-						<View style={[{ height: "55%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
-							<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
-							<InputComplex
-								title="E-mail"
-								placeholder="Insira seu e-mail."
-								insightText=""
-								firstRef={firstInputRef}
-								secondRef={secondInputRef}
-								maxLengthInput={100}
-								valueState={userEmail}
-								setValueStateOrFunctionMask={setUserEmail}
-								insightState={insightEmail}
-								setInsightState={setInsightEmail}
-								errorState={errorEmail}
-								setErrorState={setErrorEmail}
-								setFocused={setIsFocused}
-								keyboard="email-address"
-							/>
-							<InputHidden
-								title="Senha"
-								placeholder="Insira sua senha."
-								insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
-								firstRef={secondInputRef}
-								secondRef={thirdInputRef}
-								maxLengthInput={50}
-								valueState={userPassword}
-								setValueStateOrFunctionMask={setUserPassword}
-								insightState={insightPassword}
-								setInsightState={setInsightPassword}
-								errorState={errorPassword}
-								setErrorState={setErrorPassword}
-								setFocused={setIsFocused}
-								hiddenState={hiddenPassword}
-								setHiddenState={setHiddenPassword}
-							/>
-							<TouchableOpacity
-								onPress={() => {
-									checkLogin();
-								}}
-								style={[
-									stylesMain.buttonSemiRounded,
-									stylesMain.backgroundRed,
-									stylesMain.with80,
-								]}
-							>
-								<Text
-									style={stylesMain.textoButtonWith}
-									ref={thirdInputRef}
-								>
-									Acessar
-								</Text>
-							</TouchableOpacity>
-						</View>
-						<View style={[{ width: '100%', height: "15%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
-							{/**<TouchableOpacity
-								onPress={() => {
-									getLocalUser();
-								}}
-							>
-								<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
-							</TouchableOpacity>
-							<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>**/}
-							<TouchableOpacity
-								accessibilityLabel="Ir para a tela de registro"
-								onPress={() => {
-									navigation.navigate("Registrar-se");
-								}}
-							>
-								<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
-							</TouchableOpacity>
-						</View>
-						<View style={[{ height: '10%', justifyContent: 'center', alignItems: 'center', }]}>
-							<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
-								<IconCall width={rem(1.5)} height={rem(1.5)} />
-								<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
-							</TouchableOpacity>
-						</View>
-					</ScrollView>
-				</TouchableWithoutFeedback>
-			</SafeAreaView>
-		</SafeAreaProvider>
+				{/*
+			<View style={stylesMain.flexRow}>
+				<TouchableOpacity
+					onPress={() => {}}
+					style={stylesMain.buttonSemiRounded}
+				>
+					<View style={stylesMain.containerIcon}>
+						<IconFacebook width={rem(2.6)} height={rem(2.5)} />
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => {}}
+					style={stylesMain.buttonSemiRounded}
+				>
+					<View style={stylesMain.containerIcon}>
+						<IconGoogle width={rem(2.25)} height={rem(2.25)} />
+					</View>
+				</TouchableOpacity>
+			</View>
+		<View style={stylesMain.with80}>
+			<View style={[stylesMain.containerTextTopInput]}>
+				<Text style={stylesMain.textTopInput}>E-mail:</Text>
+			</View>
+			<TextInput
+				style={[stylesMain.input, stylesMain.withFull]}
+				onChangeText={(text) => {
+					if (emailRef.current) {
+						emailRef.current.value = text.toLowerCase();
+					}
+				}}
+				ref={emailRef}
+				placeholder="Insira seu e-mail"
+				keyboardType="email-address"
+			/>
 
+			<View style={stylesMain.containerTextTopInput}>
+				<Text style={stylesMain.textTopInput}>Senha:</Text>
+			</View>
+			<View
+				style={[
+					stylesMain.input,
+					stylesMain.withFull,
+					{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					},
+				]}
+			>
+				<TextInput
+					style={{ width: "90%" }}
+					onChangeText={(text) => {
+						if (passwordRef.current) {
+							passwordRef.current.value = text;
+						}
+					}}
+					ref={passwordRef}
+					placeholder="Insira sua senha"
+					secureTextEntry={hiddenPassword}
+				/>
+				<TouchableOpacity
+					onPress={() => {
+						setHiddenPassword(!hiddenPassword);
+					}}
+				>
+					{hiddenPassword ? (
+						<EyeOn name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+					) : (
+						<EyeOf name="onPassword" width={rem(1.5)} height={rem(1.5)} />
+					)}
+				</TouchableOpacity>
+			</View>
+			<Text
+				style={[
+					{ display: errorLogin ? "flex" : "none" },
+					stylesMain.textRed,
+					stylesMain.opacity,
+				]}
+			>
+				Usuário ou senha incorretos, verifique o e-mail e senha.
+			</Text>
+		</View>
+			*/}
+				<View style={[{ height: "55%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
+					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
+					<InputComplex
+						title="E-mail"
+						placeholder="Insira seu e-mail."
+						insightText=""
+						firstRef={firstInputRef}
+						secondRef={secondInputRef}
+						maxLengthInput={100}
+						valueState={userEmail}
+						setValueStateOrFunctionMask={setUserEmail}
+						insightState={insightEmail}
+						setInsightState={setInsightEmail}
+						errorState={errorEmail}
+						setErrorState={setErrorEmail}
+						setFocused={setIsFocused}
+						keyboard="email-address"
+					/>
+					<InputHidden
+						title="Senha"
+						placeholder="Insira sua senha."
+						insightText="Usuário ou senha incorretos, verifique o e-mail e senha."
+						firstRef={secondInputRef}
+						secondRef={thirdInputRef}
+						maxLengthInput={50}
+						valueState={userPassword}
+						setValueStateOrFunctionMask={setUserPassword}
+						insightState={insightPassword}
+						setInsightState={setInsightPassword}
+						errorState={errorPassword}
+						setErrorState={setErrorPassword}
+						setFocused={setIsFocused}
+						hiddenState={hiddenPassword}
+						setHiddenState={setHiddenPassword}
+					/>
+					<TouchableOpacity
+						onPress={() => {
+							checkLogin();
+						}}
+						style={[
+							stylesMain.buttonSemiRounded,
+							stylesMain.backgroundRed,
+							stylesMain.with80,
+						]}
+					>
+						<Text
+							style={stylesMain.textoButtonWith}
+							ref={thirdInputRef}
+						>
+							Acessar
+						</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={[{ width: '100%', height: "15%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
+					{/**<TouchableOpacity
+						onPress={() => {
+							getLocalUser();
+						}}
+					>
+						<Text style={[{ textAlign: 'center' }]}>Esqueceu a senha?</Text>
+					</TouchableOpacity>
+					<Text style={[stylesMain.textTopInput, { textAlign: 'center' }]}>ou</Text>**/}
+					<TouchableOpacity
+						accessibilityLabel="Ir para a tela de registro"
+						onPress={() => {
+							navigation.navigate("Registrar-se");
+						}}
+					>
+						<Text style={[stylesMain.textRed, { textAlign: 'center', fontWeight: 'bold' }]}>Registrar-se</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={[{ height: '10%', justifyContent: 'center', alignItems: 'center', }]}>
+					<TouchableOpacity onPress={handleCall} style={[stylesMain.buttonCall,]}>
+						<IconCall width={rem(1.5)} height={rem(1.5)} />
+						<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 }
 
