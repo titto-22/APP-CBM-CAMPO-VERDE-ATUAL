@@ -29,7 +29,7 @@ export default function InputComplex({
         return (
           <View style={[
             stylesMain.input, 
-            {width:'99%'},  
+            {width:'98%'},  
             insightState ? '' : stylesRegistrarse.marginBottom8,
             {zIndex: -1, justifyContent:'center'},
           ]}>
@@ -47,7 +47,7 @@ export default function InputComplex({
           <TextInput 
             style={[
               stylesMain.input, 
-              {width:'99%'}, 
+              {width:'98%'}, 
               insightState ? '' : stylesRegistrarse.marginBottom8,
               {zIndex: -1, fontSize:16},
             ]}
@@ -88,8 +88,8 @@ export default function InputComplex({
       }
     }
   return (
-    <View style={{ width: '100%' }}>
-      <View style={[{width:'100%', backgroundColor:'transparent', transform:[{translateY:vh(1)}], marginLeft:8, alignItems:'flex-start', },]}>
+    <View style={{ width: '98%' }}>
+      <View style={[{width:'98%', backgroundColor:'transparent', transform:[{translateY:vh(1)}], marginLeft:8, alignItems:'flex-start', },]}>
         <Text style={[stylesMain.textTopInput, {backgroundColor:"#fff", zIndex: 999,}]}> {title}: </Text>
       </View>
       {     

@@ -232,7 +232,7 @@ export default function Login({ navigation }) {
 			</Text>
 		</View>
 			*/}
-				<View style={[{ height: "55%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
+				<View style={[{ height: "50%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
 					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
 					<InputComplex
 						title="E-mail"
@@ -285,7 +285,7 @@ export default function Login({ navigation }) {
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={[{ width: '100%', height: "15%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
+				<View style={[{ width: '100%', height: "10%", justifyContent: 'center', gap: 5, alignItem: 'center' }]}>
 					{/**<TouchableOpacity
 						onPress={() => {
 							getLocalUser();
@@ -308,6 +308,9 @@ export default function Login({ navigation }) {
 						<IconCall width={rem(1.5)} height={rem(1.5)} />
 						<Text style={[stylesMain.textRed, stylesMain.textBold]}>193</Text>
 					</TouchableOpacity>
+				</View>
+				<View style={{ height: '10%' }}>
+					{/* <TouchableOpacity*/}
 				</View>
 			</ScrollView>
 		</KeyboardAvoidingView>
