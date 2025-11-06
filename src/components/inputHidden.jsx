@@ -28,10 +28,10 @@ export default function InputHidden({
   actionScroll
 }) {
   return (
-    <View style={{ width: '100%' }}>
+    <View style={{ width: '98%' }}>
       <View style={
         { 
-          width: '100%', 
+          width: '98%', 
           backgroundColor: 'transparent', 
           transform: [{ translateY: vh(1) }], 
           marginLeft: 8, alignItems: 'flex-start', 
@@ -46,7 +46,7 @@ export default function InputHidden({
             alignItems: "center",
             justifyContent: "space-between",
             padding:0, 
-            width:'99%'
+            width:'98%'
           },
           { zIndex: -1, fontSize: 16 },
         ]}
