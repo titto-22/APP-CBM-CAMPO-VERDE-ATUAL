@@ -233,7 +233,7 @@ export default function Login({ navigation }) {
 		</View>
 			*/}
 				<View style={[{ height: "50%", width: '100%', alignItems: 'center', justifyContent: 'center', }]}>
-					<Text style={[stylesMain.textBase]}>Efetue seu Login</Text>
+					<Text style={[stylesMain.textBase]}>Efetue Login</Text>
 					<InputComplex
 						title="E-mail"
 						placeholder="Insira seu e-mail."
@@ -350,7 +350,7 @@ export const stylesMain = StyleSheet.create({
 		objectFit: "contain",
 	},
 	textMain: {
-		fontSize: rem(1.9),
+		fontSize: rem(1.7),
 		fontWeight: "bold",
 		color: "#ff0000",
 	},
