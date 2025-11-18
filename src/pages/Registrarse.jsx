@@ -124,7 +124,7 @@ export default function Registrarse({ navigation }) {
 	//Valida formato do email
 	function validateUserEmail(email) {
 		//Regex para validar email
-		const emailRegex = /^[^\s@]+@[^\s@]+\.(com|com\.br)$/;
+		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 		// Verifica se o email corresponde à expressão regular
 		const isValid = emailRegex.test(email);
