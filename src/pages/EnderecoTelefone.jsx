@@ -466,7 +466,7 @@ export default function EnderecoTelefone({ route, navigation }) {
     salveLocalName(dataUser.name);
     salveLocalCPF(onlyNumber(dataUser.cpf));
     salveLocalPhone(onlyNumber(userPhone));
-    salveLocalEmailUser(dataUser.userEmail);
+    salveLocalEmailUser(dataUser.email);
     salveLocalStreet(userStreet);
     salveLocalAddressNumber(userNumber);
     salveLocalComplementAddress(userComplementAddress);
